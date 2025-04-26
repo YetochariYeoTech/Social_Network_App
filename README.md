@@ -1,4 +1,4 @@
-# ✨ Full Stack Realtime Chat App ✨
+# ✨ Full Stack Realtime Chat App By Greg ✨
 
 ![Demo App](/frontend/public/screenshot-for-readme.png)
 
