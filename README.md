@@ -1,9 +1,5 @@
 # ✨ Full Stack Realtime Chat App By Greg ✨
 
-![Demo App](/frontend/public/screenshot-for-readme.png)
-
-[Video Tutorial on Youtube](https://youtu.be/ntKkVrQqBYY)
-
 Highlights:
 
 - 🌟 Tech stack: MERN + Socket.io + TailwindCSS + Daisy UI
@@ -40,4 +36,5 @@ npm run build
 ```shell
 npm start
 ```
+
 # Social_Network_App
