@@ -6,10 +6,10 @@ import { useThemeStore } from "../../store/useThemeStore";
 function Sidebar() {
   const { theme } = useThemeStore();
   const commonClass =
-    "font-semibold pl-1 flex w-full gap-4 h-10 items-center hover:bg-gray-300 hover:text-black hover:border-l-4 border-primary duration-100 ease-linear hover:translate-x-1 transition-transform";
+    "font-semibold pl-1 flex w-full gap-4 h-10 items-center hover:bg-gray-300 hover:text-primary-accent hover:border-l-4 border-primary duration-100 ease-linear hover:translate-x-1 transition-transform";
   return (
     <div
-      className=" flex flex-col gap-2 w-full rounded-br-md bg-white text-gray-600"
+      className=" flex flex-col gap-2 w-full rounded-br-md bg-white text-gray-600 overflow-visible"
       data-theme={theme}
     >
       <Link to="/" className={commonClass}>

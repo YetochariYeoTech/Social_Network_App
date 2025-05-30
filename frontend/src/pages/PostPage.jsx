@@ -4,11 +4,11 @@ import RightSidePanel from "../components/Post/RightSidePanel";
 
 const PostPage = () => {
   return (
-    <div className="flex h-screen pt-20 justify-around w-full bg-slate-400">
-      <div className="rounded w-2/12">
+    <div className="flex h-screen pt-20 justify-around w-full">
+      <div className="rounded w-2/12 overflow-visible">
         <LeftSidePanel />
       </div>
-      <div className="rounded bg-blue-200 w-7/12">
+      <div className="rounded bg-neutral text-neutral-content w-7/12">
         <MiddlePanel />
       </div>
       <div className="rounded w-2/12 bg-green-900">
