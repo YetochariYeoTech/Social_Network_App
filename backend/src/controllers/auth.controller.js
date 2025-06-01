@@ -100,7 +100,7 @@ export const updateProfile = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { profilePic: uploadResponse.secure_url },
-      { new: true }
+      { new: true } // return the user data after modifications was applied
     );
 
     res.status(200).json(updatedUser);

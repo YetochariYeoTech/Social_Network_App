@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const postSchema = new mongoose.Schema(
   {
-    user: {
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       require: true,
@@ -11,9 +11,13 @@ const postSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    image: {
+    attachmentType: {
       type: String,
-      default: "",
+      enum: ["picture", "document", "link"], // Accept onl one of those records
+    },
+    attachment: {
+      type: String,
+      default: null,
     },
     likes: [
       {
