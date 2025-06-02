@@ -1,9 +1,17 @@
 import express from "express";
-import { protectedRoute } from "../middleware/auth.middleware.js";
-import { createPost, getPosts } from "../controllers/post.controller.js";
+import { protectRoute } from "../middleware/auth.middleware.js";
+import {
+  createPost,
+  deletePost,
+  getPosts,
+} from "../controllers/post.controller.js";
 
 const router = express.Router();
 
-router.post("/newpost", protectedRoute, createPost);
+router.post("/createPost", protectRoute, createPost);
 
-router.get("/posts", protectedRoute, getPosts);
+router.get("/", protectRoute, getPosts);
+
+router.delete("/deletePost/:postId", protectRoute, deletePost);
+
+export default router;

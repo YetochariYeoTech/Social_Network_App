@@ -13,9 +13,13 @@ const postSchema = new mongoose.Schema(
     },
     attachmentType: {
       type: String,
-      enum: ["picture", "document", "link"], // Accept onl one of those records
+      enum: ["image", "document", "link"], // Accept onl one of those records
     },
     attachment: {
+      type: String,
+      default: null,
+    },
+    originalFileName: {
       type: String,
       default: null,
     },
