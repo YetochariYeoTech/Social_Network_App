@@ -2,10 +2,10 @@ import mongoose from "mongoose";
 
 const postSchema = new mongoose.Schema(
   {
-    userId: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      require: true,
+      required: true,
     },
     description: {
       type: String,
@@ -13,7 +13,7 @@ const postSchema = new mongoose.Schema(
     },
     attachmentType: {
       type: String,
-      enum: ["image", "document", "link"], // Accept onl one of those records
+      enum: ["image", "document", "link", "text", null], // Accept onl one of those records
     },
     attachment: {
       type: String,
@@ -29,12 +29,20 @@ const postSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
+    likesCount: {
+      type: Number,
+      default: 0,
+    },
     comments: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Comment",
       },
     ],
+    commentsCount: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

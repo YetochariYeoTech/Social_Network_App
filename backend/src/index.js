@@ -17,11 +17,17 @@ dotenv.config();
 const PORT = process.env.PORT;
 const __dirname = path.resolve();
 
+app.use((req, res, next) => {
+  res.set("Cache-Control", "no-store");
+  next();
+});
+
 app.use(express.json({ limit: "20mb" })); // Define the maximum size that a request could have to be handled
 app.use(cookieParser());
 app.use(
   cors({
     origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );

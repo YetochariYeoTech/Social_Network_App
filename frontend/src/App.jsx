@@ -29,18 +29,18 @@ const App = () => {
 
   if (isCheckingAuth && !authUser)
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-full">
         <Loader className="size-10 animate-spin" />
       </div>
     );
 
   return (
-    <div data-theme={theme} className="w-10/12 mx-auto">
+    <div data-theme={theme} className="flex-1 w-10/12 mx-auto h-full">
       <Navbar />
 
       <Routes>
         <Route
-          path="/"
+          path="/messages"
           element={authUser ? <HomePage /> : <Navigate to="/login" />}
         />
         <Route
@@ -52,7 +52,7 @@ const App = () => {
           element={!authUser ? <LoginPage /> : <Navigate to="/" />}
         />
         <Route
-          path="/post"
+          path="/"
           element={authUser ? <PostPage /> : <Navigate to="/" />}
         />
         <Route path="/settings" element={<SettingsPage />} />

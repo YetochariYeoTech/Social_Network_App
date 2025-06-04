@@ -14,7 +14,7 @@ export const usePostStore = create((set, get) => ({
   fetchPosts: async () => {
     set({ loadingPosts: true });
     try {
-      const res = await base.get("/posts");
+      const res = await axiosInstance.get("/posts");
       set({ posts: res.data });
     } catch (error) {
       toast.error("Failed to fetch posts");

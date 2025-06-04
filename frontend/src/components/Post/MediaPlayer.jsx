@@ -1,5 +1,5 @@
 const MediaPlayer = () => {
-    return <div>Media Player</div>
-}
+  return <div className="">Media Player</div>;
+};
 
-export default MediaPlayer
+export default MediaPlayer;

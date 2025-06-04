@@ -4,7 +4,7 @@ import cloudinary from "../lib/cloudinary.js";
 export const createPost = async (req, res) => {
   const { description, attachmentType, attachment, originalFileName } =
     req.body;
-  const userId = req.user._id;
+  const user = req.user._id;
   try {
     // To be created, a post require description or attachment
     if (!description && !attachment) {
@@ -14,7 +14,7 @@ export const createPost = async (req, res) => {
     }
 
     const data = {
-      userId,
+      user,
       description,
       attachmentType,
       attachment,
@@ -52,7 +52,10 @@ export const getPosts = async (req, res) => {
     const query = date ? { createdAt: { $lt: new Date(date) } } : {};
 
     // Now let's fetch the post using the prebuild query
-    const posts = await Post.find(query).sort({ createdAt: -1 }).limit(10);
+    const posts = await Post.find(query)
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .populate("user", "fullName profilePic"); // This attach the user details to the post
 
     res.status(200).json(posts);
   } catch (error) {
@@ -72,7 +75,7 @@ export const getPosts = async (req, res) => {
 export const deletePost = async (req, res) => {
   try {
     const { postId } = req.params;
-    const userId = req.user._id;
+    const user = req.user._id;
 
     const post = await Post.findById(postId);
 
@@ -80,7 +83,7 @@ export const deletePost = async (req, res) => {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    if (post.userId.toString !== userId.toString) {
+    if (post.user.toString !== userId.toString) {
       return res
         .status(403)
         .json({ message: "You are not allowed to delete this post" });
