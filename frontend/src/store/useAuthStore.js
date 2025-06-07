@@ -81,6 +81,36 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
+  addToFavorites: async () => {
+    const { authUser } = get();
+    if (!authUser) return;
+    try {
+      const res = await axiosInstance.post(
+        `/posts/actions/favorites/${postId}`
+      );
+      toast.success("Post added to favorites");
+      set({ authUser: res.data });
+    } catch (error) {
+      console.log("error in adding to favorites:", error);
+      toast.error(error.response.data.message);
+    }
+  },
+
+  removeFromFavorites: async () => {
+    const { authUser } = get();
+    if (!authUser) return;
+    try {
+      const res = await axiosInstance.delete(
+        `/posts/actions/favorites/${postId}`
+      );
+      toast.success("Post remkoved from favorites");
+      set({ authUser: res.data });
+    } catch (error) {
+      console.log("error in adding to favorites:", error);
+      toast.error(error.response.data.message);
+    }
+  },
+
   connectSocket: () => {
     const { authUser } = get();
     if (!authUser || get().socket?.connected) return;

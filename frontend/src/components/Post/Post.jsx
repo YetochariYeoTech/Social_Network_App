@@ -25,7 +25,7 @@ function Post({ post }) {
   return (
     <>
       {post && (
-        <div className="flex flex-col p-2 gap-2 bg-neutral rounded-lg">
+        <div className="flex flex-col p-2 gap-4 bg-neutral rounded-lg">
           <div className="flex justify-between">
             <div className="flex gap-2">
               <img

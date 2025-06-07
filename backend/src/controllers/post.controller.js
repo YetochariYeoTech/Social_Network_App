@@ -28,8 +28,9 @@ export const createPost = async (req, res) => {
 
     const newPost = new Post(data);
 
-    await newPost.save();
-    res.status(201).json({ message: "New post published" });
+    let savedPost = await newPost.save();
+    savedPost = await savedPost.populate("user", "fullName profilePic");
+    res.status(201).json({ newPost: savedPost });
   } catch (error) {
     console.log("Error in createPost controller: ", error.message);
     res.status(500).json({ error: "Internal server error" });

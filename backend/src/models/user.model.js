@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import { type } from "os";
+import { ref } from "process";
 
 const userSchema = new mongoose.Schema(
   {
@@ -16,6 +18,20 @@ const userSchema = new mongoose.Schema(
       required: true,
       minlength: 6,
     },
+    likedPosts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Post",
+        required: false,
+      },
+    ],
+    favoritesPosts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Post",
+        required: false,
+      },
+    ],
     profilePic: {
       type: String,
       default: "",
