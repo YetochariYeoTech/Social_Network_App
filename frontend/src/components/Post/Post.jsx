@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { MdOutlineMoreHoriz } from "react-icons/md";
 import { FaComment, FaRegBookmark } from "react-icons/fa";
 import { FaShareNodes } from "react-icons/fa6";
@@ -11,6 +11,8 @@ const iconsClasses =
   "h-5 w-5 cursor-pointer transition duration-200 hover:scale-110";
 
 function Post({ post }) {
+  const [isLiked, setIsLiked] = useState(false);
+
   function postPublishedOn() {
     if (!post.createdAt) return "Unknown date";
 

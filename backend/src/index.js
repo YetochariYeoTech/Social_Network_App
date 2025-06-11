@@ -2,11 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-
 import path from "path";
-
 import { connectDB } from "./lib/db.js";
-
 import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
 import postRoutes from "./routes/post.route.js";
@@ -34,7 +31,6 @@ app.use(
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
-app.use("/api/posts", postRoutes);
 app.use("/api/posts", postRoutes);
 
 if (process.env.NODE_ENV === "production") {
