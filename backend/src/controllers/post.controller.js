@@ -1,39 +1,97 @@
 import Post from "../models/post.model.js";
+import User from "../models/user.model.js";
 import cloudinary from "../lib/cloudinary.js";
+import mongoose from "mongoose";
+
+//     req.body;
+//   const user = req.user._id;
+//   try {
+//     // To be created, a post require description or attachment
+//     if (!description && !attachment) {
+//       return res.status(400).json({
+//         message: "You should fill description field or attach a file",
+//       });
+//     }
+
+//     const data = {
+//       user,
+//       description,
+//       attachmentType,
+//       attachment,
+//       originalFileName,
+//     };
+
+//     if (attachment) {
+//       const uploadResponse = await cloudinary.uploader.upload(attachment);
+//       data.attachment = uploadResponse.secure_url;
+//     }
+
+//     const newPost = new Post(data);
+
+//     let savedPost = await newPost.save();
+//     savedPost = await savedPost.populate("user", "fullName profilePic");
+//     res.status(201).json({ newPost: savedPost });
+//   } catch (error) {
+//     console.log("Error in createPost controller: ", error.message);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// };
 
 export const createPost = async (req, res) => {
-  const { description, attachmentType, attachment, originalFileName } =
-    req.body;
-  const user = req.user._id;
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
-    // To be created, a post require description or attachment
+    const { description, attachmentType, attachment, originalFileName } =
+      req.body;
+    const userId = req.user._id;
+
+    // Validate input
     if (!description && !attachment) {
       return res.status(400).json({
-        message: "You should fill description field or attach a file",
+        message: "Please provide a description or an attachment.",
       });
     }
 
-    const data = {
-      user,
+    // Prepare post data
+    const postData = {
+      user: userId,
       description,
       attachmentType,
-      attachment,
       originalFileName,
     };
 
+    // Handle cloudinary upload if there's an attachment
     if (attachment) {
-      const uploadResponse = await cloudinary.uploader.upload(attachment);
-      data.attachment = uploadResponse.secure_url;
+      const uploadRes = await cloudinary.uploader.upload(attachment);
+      postData.attachment = uploadRes.secure_url;
     }
 
-    const newPost = new Post(data);
+    // Save post in transaction
+    const newPost = await new Post(postData).save({ session });
 
-    let savedPost = await newPost.save();
-    savedPost = await savedPost.populate("user", "fullName profilePic");
-    res.status(201).json({ newPost: savedPost });
+    // Push post ID to user's Posts array
+    await User.findByIdAndUpdate(
+      userId,
+      { $push: { Posts: newPost._id } },
+      { session }
+    );
+
+    await session.commitTransaction();
+
+    const populatedPost = await Post.findById(newPost._id).populate(
+      "user",
+      "fullName profilePic"
+    );
+
+    return res.status(201).json({ newPost: populatedPost });
   } catch (error) {
-    console.log("Error in createPost controller: ", error.message);
-    res.status(500).json({ error: "Internal server error" });
+    await session.abortTransaction();
+
+    console.error("Error in createPost controller:", error.message);
+    return res.status(500).json({ error: "Internal server error" });
+  } finally {
+    session.endSession();
   }
 };
 
@@ -98,3 +156,6 @@ export const deletePost = async (req, res) => {
     res.status(500).json({ message: "Failed to delete post" });
   }
 };
+
+// export const createPost = async (req, res) => {
+//   const { description, attachmentType, attachment, originalFileName } =

@@ -15,6 +15,8 @@ import { Loader } from "lucide-react";
 import { Toaster } from "react-hot-toast";
 import PostPage from "./pages/PostPage";
 
+import { Provider } from "@/components/ui/provider";
+
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore();
   const { theme } = useThemeStore();
@@ -35,35 +37,37 @@ const App = () => {
     );
 
   return (
-    <div data-theme={theme} className="flex-1 w-10/12 mx-auto h-full">
-      <Navbar />
+    <Provider>
+      <div data-theme={theme} className="flex-1 w-10/12 mx-auto h-full">
+        <Navbar />
 
-      <Routes>
-        <Route
-          path="/messages"
-          element={authUser ? <HomePage /> : <Navigate to="/login" />}
-        />
-        <Route
-          path="/signup"
-          element={!authUser ? <SignUpPage /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/login"
-          element={!authUser ? <LoginPage /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/"
-          element={authUser ? <PostPage /> : <Navigate to="/" />}
-        />
-        <Route path="/settings" element={<SettingsPage />} />
-        <Route
-          path="/profile"
-          element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
-        />
-      </Routes>
+        <Routes>
+          <Route
+            path="/messages"
+            element={authUser ? <HomePage /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/signup"
+            element={!authUser ? <SignUpPage /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/login"
+            element={!authUser ? <LoginPage /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/"
+            element={authUser ? <PostPage /> : <Navigate to="/login" />}
+          />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route
+            path="/profile"
+            element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
+          />
+        </Routes>
 
-      <Toaster />
-    </div>
+        <Toaster />
+      </div>
+    </Provider>
   );
 };
 export default App;

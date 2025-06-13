@@ -1,13 +1,9 @@
 import express from "express";
 import {
-  addToFavorites,
   checkAuth,
-  likePost,
   login,
   logout,
-  removeFromFavorites,
   signup,
-  unlikePost,
   updateProfile,
 } from "../controllers/auth.controller.js";
 import { protectRoute } from "../middleware/auth.middleware.js";

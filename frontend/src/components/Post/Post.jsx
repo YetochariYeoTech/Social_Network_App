@@ -31,7 +31,7 @@ function Post({ post }) {
           <div className="flex justify-between">
             <div className="flex gap-2">
               <img
-                src={post.user?.profilePic}
+                src={post.user?.profilePic || "/avatar.png"}
                 className="h-12 w-12 object-cover rounded-full"
                 alt="Profile"
               />

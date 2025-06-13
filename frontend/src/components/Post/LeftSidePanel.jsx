@@ -9,7 +9,11 @@ function LeftSidePanel() {
     <div className="flex-col justify-center">
       {authUser && (
         <>
-          <ProfileBadge name={authUser?.fullName} email={authUser?.email} />
+          <ProfileBadge
+            profilePic={authUser?.profilePic}
+            name={authUser?.fullName}
+            email={authUser?.email}
+          />
           <Sidebar />
         </>
       )}

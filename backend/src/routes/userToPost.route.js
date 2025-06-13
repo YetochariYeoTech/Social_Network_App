@@ -1,11 +1,11 @@
 import express from "express";
-import { protectRoute } from "../middleware/auth.middleware";
+import { protectRoute } from "../middleware/auth.middleware.js";
 import {
   addToFavorites,
   likePost,
   removeFromFavorites,
   unlikePost,
-} from "../controllers/userToPost.controller";
+} from "../controllers/userToPost.controller.js";
 
 const router = express.Router();
 

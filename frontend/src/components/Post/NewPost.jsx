@@ -5,6 +5,7 @@ import { usePostStore } from "../../store/usePostStore";
 import { useAuthStore } from "../../store/useAuthStore";
 import { BsSendFill } from "react-icons/bs";
 import { GrAddCircle, GrHide } from "react-icons/gr";
+import { Spinner, Text, VStack } from "@chakra-ui/react";
 
 function NewPost() {
   const { createPost, creatingPost } = usePostStore();
@@ -89,7 +90,9 @@ function NewPost() {
     });
   }
 
-  return (
+  const htmlContent = creatingPost ? (
+    <DisplaySpinner />
+  ) : (
     <form
       encType="multipart/form-data"
       className={`p-1 flex flex-col gap-3 w-full opacity-90 text-primary-content rounded-lg ${!hideForm && "bg-primary"}`}
@@ -129,7 +132,7 @@ function NewPost() {
       >
         <div className="flex items-center gap-3">
           <img
-            src={authUser?.profilePic}
+            src={authUser?.profilePic || "/avatar.png"}
             className="h-12 w-12 object-cover rounded-full"
             alt="Profile"
           />
@@ -186,6 +189,17 @@ function NewPost() {
       </div>
     </form>
   );
+
+  return htmlContent;
 }
+
+const DisplaySpinner = () => {
+  return (
+    <VStack colorPalette="teal">
+      <Spinner color="blue.500" size="lg" borderWidth="4px" />
+      <Text color="colorPalette.600">Loading...</Text>
+    </VStack>
+  );
+};
 
 export default NewPost;

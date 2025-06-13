@@ -25,6 +25,14 @@ const userSchema = new mongoose.Schema(
         required: false,
       },
     ],
+    posts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Post",
+        required: false,
+        default: [],
+      },
+    ],
     favoritesPosts: [
       {
         type: mongoose.Schema.Types.ObjectId,

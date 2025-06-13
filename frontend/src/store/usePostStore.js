@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
-import { useAuthStore } from "./authStore"; // make sure this import exists
+import { useAuthStore } from "./useAuthStore";
 
 import.meta.env.MODE === "development" ? "http://localhost:5001/api" : "/";
 
@@ -32,18 +32,19 @@ export const usePostStore = create((set, get) => ({
     try {
       const res = await axiosInstance.post("/posts/createPost", data);
       const newPost = res.data.newPost;
-      toast.success("Post created successfully");
 
       // Prepend new post to global post list
       set({ posts: [newPost, ...get().posts] });
 
-      // Update authUser's posts in authStore
-      const authStore = useAuthStore.getState();
-      const updatedUser = {
-        ...authStore.authUser,
-        posts: [newPost._id, ...authStore.authUser.posts],
-      };
-      authStore.set({ authUser: updatedUser });
+      // ✅ Update authUser's posts using setState
+      useAuthStore.setState((prev) => ({
+        authUser: {
+          ...prev.authUser,
+          posts: [newPost._id, ...(prev.authUser?.posts || [])],
+        },
+      }));
+
+      toast.success("Post created successfully");
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to create post");
       console.error("createPost error:", error);
