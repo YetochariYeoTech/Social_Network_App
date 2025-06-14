@@ -47,7 +47,7 @@ const navigationItems = [
   { icon: Home, label: "Home", path: "/" },
   { icon: File, label: "Files", path: "/files" },
   { icon: MessageSquare, label: "Messages", path: "/messages" },
-  { icon: Star, label: "Favorites", path: "/" },
+  { icon: Star, label: "Favorites", path: "/profile" },
   { icon: Settings, label: "Settings", path: "/settings" },
 ];
 

@@ -2,7 +2,6 @@ import React from "react";
 import ProfileBadge from "../ProfileBadge";
 import Sidebar from "./Sidebar";
 import { useAuthStore } from "../../store/useAuthStore";
-import Newsletter from "./NewsLetter";
 
 function LeftSidePanel() {
   const { authUser } = useAuthStore();

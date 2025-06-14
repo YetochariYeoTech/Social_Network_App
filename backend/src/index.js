@@ -6,7 +6,6 @@ import path from "path";
 import { connectDB } from "./lib/db.js";
 import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
-import userToPostRoutes from "./routes/message.route.js";
 import postRoutes from "./routes/post.route.js";
 import { app, server } from "./lib/socket.js";
 
