@@ -6,17 +6,14 @@ import {
   deletePost,
   getPosts,
 } from "../controllers/post.controller.js";
-import { app } from "../lib/socket.js";
 
 const router = express.Router();
 
 router.post("/createPost", protectRoute, createPost);
-
 router.get("/", protectRoute, getPosts);
-
 router.delete("/deletePost/:postId", protectRoute, deletePost);
 
-// User and Post interactions are separated from normal CRUD actions
-app.use("/actions", userToPostRoutes);
+// ✅ Correct usage: Nest userToPostRoutes under /actions
+router.use("/actions", userToPostRoutes);
 
 export default router;

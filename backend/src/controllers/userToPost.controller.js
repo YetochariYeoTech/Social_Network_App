@@ -9,22 +9,24 @@ import mongoose from "mongoose";
  *
  * @param {Object} req - Express request object
  * @param {Object} req.params - Route parameters
- * @param {string} req.params.postID - The ID of the post to add to favorites
+ * @param {string} req.params.postId - The ID of the post to add to favorites
  * @param {Object} req.user - The authenticated user object (populated by middleware)
  * @param {Object} res - Express response object
  *
  * @returns {Object} - Returns the updated user document or an error response
  *
  * @example
- * POST /api/favorites/:postID
+ * POST /api/favorites/:postId
  */
 export const addToFavorites = async (req, res) => {
-  const { postID } = req.params;
+  const { postId } = req.params;
   const userId = req.user._id;
+
+  console.log(req.params);
 
   try {
     // Let's verify that the post exists
-    const post = await Post.findById(postID);
+    const post = await Post.findById(postId);
 
     if (!post) {
       return res.status(404).json({ message: "No post found with this ID" });
@@ -33,7 +35,7 @@ export const addToFavorites = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       {
-        $addToSet: { favoritesPosts: postID },
+        $addToSet: { favoritePosts: postId },
       },
       { new: true }
     );
@@ -54,30 +56,30 @@ export const addToFavorites = async (req, res) => {
  *
  * @param {Object} req - Express request object
  * @param {Object} req.params - Route parameters
- * @param {string} req.params.postID - The ID of the post to remove from favorites
+ * @param {string} req.params.postId - The ID of the post to remove from favorites
  * @param {Object} req.user - The authenticated user object (populated by middleware)
  * @param {Object} res - Express response object
  *
  * @returns {Object} - Returns the updated user document or an error response
  *
  * @example
- * DELETE /api/favorites/:postID
+ * DELETE /api/favorites/:postId
  */
 export const removeFromFavorites = async (req, res) => {
-  const { postID } = req.params;
+  const { postId } = req.params;
   const userId = req.user._id;
 
   try {
     // Optional: check if post exists (not required for removal logic)
-    const post = await Post.findById(postID);
+    const post = await Post.findById(postId);
     if (!post) {
       return res.status(404).json({ message: "No post found with this ID" });
     }
 
-    // Remove the postID from the user's favoritesPosts array
+    // Remove the postId from the user's favoritesPosts array
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { $pull: { favoritesPosts: postID } },
+      { $pull: { favoritePosts: postId } },
       { new: true }
     );
 
@@ -94,14 +96,14 @@ export const removeFromFavorites = async (req, res) => {
  *              using a MongoDB transaction to ensure consistency.
  */
 export const likePost = async (req, res) => {
-  const { postID } = req.params;
+  const { postId } = req.params;
   const userId = req.user._id;
 
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
-    const post = await Post.findById(postID).session(session);
+    const post = await Post.findById(postId).session(session);
     if (!post) {
       await session.abortTransaction();
       session.endSession();
@@ -116,14 +118,14 @@ export const likePost = async (req, res) => {
     }
 
     // Check if already liked
-    if (user.likedPosts.includes(postID)) {
+    if (user.likedPosts.includes(postId)) {
       await session.abortTransaction();
       session.endSession();
       return res.status(400).json({ message: "Post already liked" });
     }
 
     // Add to likedPosts
-    user.likedPosts.push(postID);
+    user.likedPosts.push(postId);
     await user.save({ session });
 
     // Increment likes count
@@ -150,14 +152,14 @@ export const likePost = async (req, res) => {
  *              using a MongoDB transaction to ensure consistency. Returns the updated user.
  */
 export const unlikePost = async (req, res) => {
-  const { postID } = req.params;
+  const { postId } = req.params;
   const userId = req.user._id;
 
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
-    const post = await Post.findById(postID).session(session);
+    const post = await Post.findById(postId).session(session);
     if (!post) {
       await session.abortTransaction();
       session.endSession();
@@ -172,14 +174,14 @@ export const unlikePost = async (req, res) => {
     }
 
     // Check if the post is actually liked by the user
-    if (!user.likedPosts.includes(postID)) {
+    if (!user.likedPosts.includes(postId)) {
       await session.abortTransaction();
       session.endSession();
       return res.status(400).json({ message: "Post not liked yet" });
     }
 
-    // Remove postID from likedPosts
-    user.likedPosts.pull(postID);
+    // Remove postId from likedPosts
+    user.likedPosts.pull(postId);
     await user.save({ session });
 
     // Decrement likesCount (but prevent negative values)
@@ -192,10 +194,7 @@ export const unlikePost = async (req, res) => {
     // Fetch the updated user after transaction
     const updatedUser = await User.findById(userId);
 
-    res.status(200).json({
-      message: "Post unliked successfully",
-      user: updatedUser,
-    });
+    res.status(200).json(updatedUser);
   } catch (error) {
     await session.abortTransaction();
     session.endSession();

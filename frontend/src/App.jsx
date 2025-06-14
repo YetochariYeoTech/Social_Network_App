@@ -38,7 +38,7 @@ const App = () => {
 
   return (
     <Provider>
-      <div data-theme={theme} className="flex-1 w-10/12 mx-auto h-full">
+      <div data-theme={theme} className="flex-1 w-12/12 h-full bg-slate-500">
         <Navbar />
 
         <Routes>

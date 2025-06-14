@@ -1,6 +1,4 @@
 import mongoose from "mongoose";
-import { type } from "os";
-import { ref } from "process";
 
 const userSchema = new mongoose.Schema(
   {
@@ -13,36 +11,59 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    role: {
+      type: String,
+      enum: ["STUDENT", "TEACHER", "STAFF", "ADMIN"],
+      default: "STUDENT",
+    },
     password: {
       type: String,
       required: true,
       minlength: 6,
     },
+    bio: {
+      type: String,
+      default: null,
+    },
+    location: {
+      type: String,
+      default: null,
+    },
     likedPosts: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Post",
-        required: false,
+        default: [],
+      },
+    ],
+    blockedUsers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: [],
       },
     ],
     posts: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Post",
-        required: false,
         default: [],
       },
     ],
-    favoritesPosts: [
+    favoritePosts: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Post",
-        required: false,
+        default: [],
       },
     ],
     profilePic: {
       type: String,
-      default: "",
+      default: null,
+    },
+    portfolio: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Portfolio",
     },
   },
   { timestamps: true }

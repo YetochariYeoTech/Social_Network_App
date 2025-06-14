@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MdOutlineMoreHoriz } from "react-icons/md";
 import { FaComment, FaRegBookmark } from "react-icons/fa";
 import { FaShareNodes } from "react-icons/fa6";
-import { MdOutlineFavorite } from "react-icons/md";
-
+import { BiSolidLike } from "react-icons/bi";
+// Stores import
+import { useAuthStore } from "../../store/useAuthStore";
+import { usePostStore } from "../../store/usePostStore";
 // Animated UI components
 import TiltedCard from "../animatedUI/TiltedCard";
 
@@ -11,8 +13,6 @@ const iconsClasses =
   "h-5 w-5 cursor-pointer transition duration-200 hover:scale-110";
 
 function Post({ post }) {
-  const [isLiked, setIsLiked] = useState(false);
-
   function postPublishedOn() {
     if (!post.createdAt) return "Unknown date";
 
@@ -63,23 +63,87 @@ function Post({ post }) {
               </div>
             )}
           </div>
-          <div className="flex justify-between">
-            <span className="flex gap-3">
-              <span className="flex gap-1">
-                <MdOutlineFavorite className={iconsClasses} />
-                {post?.likesCount}
-              </span>
-              <span className="flex gap-1">
-                <FaComment className={iconsClasses} />
-                {post?.likesCount}
-              </span>
-              <FaShareNodes className={iconsClasses} />
-            </span>
-            <FaRegBookmark className={iconsClasses} />
-          </div>
+          <PostFooter
+            postId={post._id}
+            likesCount={post.likesCount}
+            commentsCount={post.commentsCount}
+          />
         </div>
       )}
     </>
+  );
+}
+
+function PostFooter({ postId, likesCount, commentsCount }) {
+  const [postStatus, setPostStatus] = useState({});
+  const [likes, setLikes] = useState(likesCount);
+  const { authUser } = useAuthStore();
+  const { addToFavorites, removeFromFavorites, addToLiked, removeFromLiked } =
+    usePostStore();
+
+  useEffect(() => {
+    const isFavorite = authUser?.favoritePosts?.includes(postId);
+    const isLiked = authUser?.likedPosts?.includes(postId);
+
+    if (isFavorite) setPostStatus({ isFavorite: true });
+    if (isLiked) setPostStatus({ isLiked: true });
+  }, [authUser, postId]);
+
+  async function handleFavoriteAction() {
+    const isFavorite = (authUser?.favoritePosts ?? []).includes(postId);
+    // If the post is already added to favorites, we remove it from the collection
+    if (isFavorite) {
+      await removeFromFavorites(postId);
+      setPostStatus((prev) => {
+        return { ...prev, isFavorite: false };
+      });
+      return;
+    }
+    // In case it doesn't exist in favorites, we add it
+    await addToFavorites(postId);
+    setPostStatus((prev) => ({ ...prev, isFavorite: true }));
+    return;
+  }
+
+  async function handleLikeAction() {
+    const isLiked = (authUser?.likedPosts ?? []).includes(postId);
+    // If the post is already added to liked, we remove it from the collection
+    if (isLiked) {
+      await removeFromLiked(postId);
+      setPostStatus((prev) => {
+        return { ...prev, isLiked: false };
+      });
+      setLikes((count) => Math.max(0, count - 1));
+      return;
+    }
+    // In case it doesn't exist in liked, we add it
+    await addToLiked(postId);
+    setPostStatus((prev) => ({ ...prev, isLiked: true }));
+    setLikes((count) => count + 1);
+    return;
+  }
+
+  return (
+    <div className="flex justify-between">
+      <span className="flex gap-3">
+        <span className="flex gap-1">
+          <BiSolidLike
+            className={`${iconsClasses} ${postStatus.isLiked ? "text-blue-500" : ""}`}
+            onClick={handleLikeAction}
+          />
+          {likes}
+        </span>
+        <span className="flex gap-1">
+          <FaComment className={iconsClasses} />
+          {commentsCount || 0}
+        </span>
+        <FaShareNodes className={iconsClasses} />
+      </span>
+      <FaRegBookmark
+        className={`${iconsClasses} transition-colors duration-100 ${postStatus.isFavorite ? "bg-yellow-600" : ""}`}
+        onClick={handleFavoriteAction}
+      />
+    </div>
   );
 }
 

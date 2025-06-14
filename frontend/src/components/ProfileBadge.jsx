@@ -5,10 +5,10 @@ function ProfileBadge({ name, email, profilePic }) {
   return (
     <Link
       to={"/profile"}
-      className="flex my-auto bg-slate-500 rounded py-1 gap-2 hover:scale-[1.01] transition-transform duration-200"
+      className="flex my-auto bg-white rounded-lg py-1 gap-2 hover:scale-[1.01] transition-transform duration-200"
     >
       <img
-        src="/avatar.png"
+        src={profilePic || "/avatar.png"}
         className="w-10 h-10 ml-1 my-auto bg-white rounded-full"
       />
       <div className="">

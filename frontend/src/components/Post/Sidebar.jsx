@@ -1,38 +1,81 @@
 import { Link } from "react-router-dom";
-import { File } from "lucide-react";
-import { FaUserFriends, FaPhotoVideo, FaMusic, FaBook } from "react-icons/fa";
 import { useThemeStore } from "../../store/useThemeStore";
+import {
+  File,
+  MessageSquare,
+  Star,
+  BookOpen,
+  Home,
+  Settings,
+} from "lucide-react";
+
+const sidebarStyles = {
+  container: `
+    flex flex-col space-y-2 w-full bg-white px-2 rounded-lg
+  `,
+  sectionTitle: `
+    text-xs font-semibold text-slate-500 uppercase tracking-wider
+    px-3 py-2 animate-fadeInRight
+  `,
+  navItem: `
+    group flex items-center space-x-3 px-3 py-3 rounded-xl
+    text-slate-700 font-medium transition-all duration-300 ease-out
+    hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50
+    hover:text-indigo-600 hover:shadow-md hover:scale-[1.02]
+    hover:translate-x-1 active:scale-[0.98]
+    cursor-pointer relative overflow-hidden
+    before:absolute before:inset-0 before:bg-gradient-to-r 
+    before:from-blue-400 before:to-indigo-500 before:opacity-0
+    before:transition-opacity before:duration-300
+    hover:before:opacity-10 before:rounded-xl
+  `,
+  navIcon: `
+    w-5 h-5 transition-all duration-300 group-hover:scale-110
+    group-hover:rotate-3 drop-shadow-sm
+  `,
+  navText: `
+    transition-all duration-300 group-hover:font-semibold
+  `,
+  activeDot: `
+    absolute right-3 w-2 h-2 bg-indigo-500 rounded-full
+    opacity-0 group-hover:opacity-100 transition-all duration-300
+    animate-pulse
+  `,
+};
+
+const navigationItems = [
+  { icon: Home, label: "Home", path: "/" },
+  { icon: File, label: "Files", path: "/files" },
+  { icon: MessageSquare, label: "Messages", path: "/messages" },
+  { icon: Star, label: "Favorites", path: "/" },
+  { icon: Settings, label: "Settings", path: "/settings" },
+];
 
 function Sidebar() {
   const { theme } = useThemeStore();
-  const commonClass =
-    "font-semibold pl-1 flex w-full gap-4 h-10 items-center hover:bg-gray-300 hover:text-primary-accent hover:border-l-4 border-primary duration-100 ease-linear hover:translate-x-1 transition-transform";
+
   return (
-    <div
-      className=" flex flex-col gap-2 w-full rounded-br-md bg-white text-gray-600 overflow-visible"
-      data-theme={theme}
-    >
-      <Link to="/" className={commonClass}>
-        <File className="w-6 h-6" />
-        <span>Files</span>
-      </Link>
-      <Link to="/" className={commonClass}>
-        <FaUserFriends className="w-6 h-6" />
-        <span>Friends</span>
-      </Link>
-      <Link to="/" className={commonClass}>
-        <FaPhotoVideo className="w-6 h-6" />
-        <span>Videos</span>
-      </Link>
-      <Link to="/" className={commonClass}>
-        <FaMusic className="w-6 h-6" />
-        <span>Music</span>
-      </Link>
-      <Link to="/" className={commonClass}>
-        <FaBook className="w-6 h-6" />
-        <span>Books</span>
-      </Link>
-    </div>
+    <nav className={sidebarStyles.container}>
+      <div className={sidebarStyles.sectionTitle}>Navigation</div>
+
+      <div className="space-y-1">
+        {navigationItems.map((item, index) => {
+          const Icon = item.icon;
+          return (
+            <Link
+              to={item.path}
+              key={item.path}
+              className={`${sidebarStyles.navItem} animate-fadeInRight`}
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
+              <Icon className={sidebarStyles.navIcon} />
+              <span className={sidebarStyles.navText}>{item.label}</span>
+              <div className={sidebarStyles.activeDot}></div>
+            </Link>
+          );
+        })}
+      </div>
+    </nav>
   );
 }
 

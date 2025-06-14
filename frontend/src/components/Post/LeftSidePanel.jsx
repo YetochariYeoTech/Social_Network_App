@@ -2,22 +2,23 @@ import React from "react";
 import ProfileBadge from "../ProfileBadge";
 import Sidebar from "./Sidebar";
 import { useAuthStore } from "../../store/useAuthStore";
+import Newsletter from "./NewsLetter";
 
 function LeftSidePanel() {
   const { authUser } = useAuthStore();
   return (
-    <div className="flex-col justify-center">
+    <>
       {authUser && (
-        <>
+        <div className="flex flex-col justify-center gap-6">
           <ProfileBadge
             profilePic={authUser?.profilePic}
             name={authUser?.fullName}
             email={authUser?.email}
           />
           <Sidebar />
-        </>
+        </div>
       )}
-    </div>
+    </>
   );
 }
 

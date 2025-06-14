@@ -73,7 +73,7 @@ export const createPost = async (req, res) => {
     // Push post ID to user's Posts array
     await User.findByIdAndUpdate(
       userId,
-      { $push: { Posts: newPost._id } },
+      { $push: { posts: { $each: [newPost._id], $position: 0 } } },
       { session }
     );
 
