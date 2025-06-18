@@ -1,20 +1,32 @@
 import React, { useEffect } from "react";
 import Post from "./Post";
 import { usePostStore } from "../../store/usePostStore";
+import PostSkeleton from "./PostSkeleton";
 
 function PostList() {
   const { posts, loadingPosts, fetchPosts } = usePostStore();
 
   useEffect(() => {
-    fetchPosts(); // Fetch posts when the component mounts
-    console.log(posts);
+    usePostStore.setState({ loadingPosts: true });
+
+    setTimeout(() => {
+      fetchPosts(); // Fetch posts when the component mounts
+      // console.log(posts);
+    }, 1000);
   }, []);
+
   return (
     <div className="mt-2 flex flex-col gap-3 overflow-y-scroll overflow-x-hidden h-screen p-2">
       {/* Loading posts screen */}
-      {loadingPosts && <p>Loading posts...</p>}
+      {loadingPosts &&
+        Array.from({ length: 3 }).map((_, idx) => <PostSkeleton key={idx} />)}
       {/* No posts found screen */}
-      {!loadingPosts && posts.length === 0 && <p>No posts found.</p>}
+      {posts.length === 0 && (
+        <p>
+          There is not posts for the moment. Please check later or refresh the
+          page.
+        </p>
+      )}
       {/* Render the posts */}
       {posts.length > 0 &&
         posts.map((post) => <Post key={post._id} post={post} />)}

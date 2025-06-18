@@ -8,6 +8,7 @@ import {
   User,
   Menu,
   MessageCircle,
+  Star,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -54,6 +55,15 @@ const Navbar = () => {
               >
                 <User className="w-5 h-5" />
                 <span>For You</span>
+              </Link>
+              <Link
+                to="/mycollection"
+                className={`btn btn-sm gap-2 ${
+                  isActive("/mycollection") ? "bg-primary text-white" : ""
+                }`}
+              >
+                <Star className="w-5 h-5" />
+                <span>My collection</span>
               </Link>
 
               <Link
@@ -123,6 +133,16 @@ const Navbar = () => {
                 >
                   <User className="w-4 h-4 mr-2" />
                   For You
+                </Link>
+
+                <Link
+                  to="/mycollection"
+                  className={`btn btn-sm w-full ${
+                    isActive("/mycollection") ? "bg-primary text-white" : ""
+                  }`}
+                >
+                  <Star className="w-4 h-4 mr-2" />
+                  My collection
                 </Link>
 
                 <Link

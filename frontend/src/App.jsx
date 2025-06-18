@@ -16,18 +16,19 @@ import { Toaster } from "react-hot-toast";
 import PostPage from "./pages/PostPage";
 
 import { Provider } from "@/components/ui/provider";
+import FavoritePage from "./pages/FavoritePage";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore();
   const { theme } = useThemeStore();
 
-  console.log({ onlineUsers });
+  // console.log({ onlineUsers });
 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
 
-  console.log({ authUser });
+  // console.log({ authUser });
 
   if (isCheckingAuth && !authUser)
     return (
@@ -62,6 +63,10 @@ const App = () => {
           <Route
             path="/profile"
             element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/mycollection"
+            element={authUser ? <FavoritePage /> : <Navigate to="/login" />}
           />
         </Routes>
 

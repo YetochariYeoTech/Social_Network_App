@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { MdOutlineMoreHoriz } from "react-icons/md";
-import { FaComment, FaRegBookmark } from "react-icons/fa";
+import { FaComment, FaBookmark } from "react-icons/fa";
+
 import { FaShareNodes } from "react-icons/fa6";
 import { BiSolidLike } from "react-icons/bi";
 // Stores import
@@ -75,7 +76,10 @@ function Post({ post }) {
 }
 
 function PostFooter({ postId, likesCount, commentsCount }) {
-  const [postStatus, setPostStatus] = useState({});
+  const [postStatus, setPostStatus] = useState({
+    isLiked: false,
+    isFavorite: false,
+  });
   const [likes, setLikes] = useState(likesCount);
   const { authUser } = useAuthStore();
   const { addToFavorites, removeFromFavorites, addToLiked, removeFromLiked } =
@@ -85,8 +89,9 @@ function PostFooter({ postId, likesCount, commentsCount }) {
     const isFavorite = authUser?.favoritePosts?.includes(postId);
     const isLiked = authUser?.likedPosts?.includes(postId);
 
-    if (isFavorite) setPostStatus({ isFavorite: true });
-    if (isLiked) setPostStatus({ isLiked: true });
+    if (isFavorite) setPostStatus((prev) => ({ ...prev, isFavorite: true }));
+    if (isLiked) setPostStatus((prev) => ({ ...prev, isLiked: true }));
+    console.log(authUser?.favoritePosts);
   }, [authUser, postId]);
 
   async function handleFavoriteAction() {
@@ -139,8 +144,8 @@ function PostFooter({ postId, likesCount, commentsCount }) {
         </span>
         <FaShareNodes className={iconsClasses} />
       </span>
-      <FaRegBookmark
-        className={`${iconsClasses} transition-colors duration-100 ${postStatus.isFavorite ? "bg-yellow-600" : ""}`}
+      <FaBookmark
+        className={`${iconsClasses} transition-colors duration-100 ${postStatus.isFavorite ? "text-yellow-600" : ""}`}
         onClick={handleFavoriteAction}
       />
     </div>

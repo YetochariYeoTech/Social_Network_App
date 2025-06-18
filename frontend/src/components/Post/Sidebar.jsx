@@ -1,13 +1,6 @@
 import { Link } from "react-router-dom";
 import { useThemeStore } from "../../store/useThemeStore";
-import {
-  File,
-  MessageSquare,
-  Star,
-  BookOpen,
-  Home,
-  Settings,
-} from "lucide-react";
+import { File, MessageSquare, Star, Home, Settings } from "lucide-react";
 
 const sidebarStyles = {
   container: `
@@ -47,7 +40,7 @@ const navigationItems = [
   { icon: Home, label: "Home", path: "/" },
   { icon: File, label: "Files", path: "/files" },
   { icon: MessageSquare, label: "Messages", path: "/messages" },
-  { icon: Star, label: "Favorites", path: "/profile" },
+  { icon: Star, label: "My collection", path: "/mycollection" },
   { icon: Settings, label: "Settings", path: "/settings" },
 ];
 
