@@ -1,15 +1,25 @@
-// File: Favorite.jsx
-import React, { useState } from "react";
+// File: CollectionPage.jsx
+import React, { useEffect, useState } from "react";
 import { favoritePosts, likedPosts } from "../data/postsData";
 import PostGrid from "../components/Favorite/PostGrid";
 import EmptyState from "../components/Favorite/EmptyState";
 import TabToggle from "../components/Favorite/TabToggle";
 import SearchBar from "../components/Favorite/Searchbar";
+import CollectionSkeleton from "../components/skeletons/CollectionSkeleton";
 
-const FavoritePage = () => {
+const CollectionPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [activeTab, setActiveTab] = useState("favorites");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000); // simulate loading delay
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const currentPosts = activeTab === "favorites" ? favoritePosts : likedPosts;
   const categories = [
@@ -74,7 +84,9 @@ const FavoritePage = () => {
           filteredPosts={filteredPosts}
         />
 
-        {filteredPosts.length > 0 ? (
+        {isLoading ? (
+          <CollectionSkeleton />
+        ) : filteredPosts.length > 0 ? (
           <PostGrid posts={filteredPosts} activeTab={activeTab} />
         ) : (
           <EmptyState />
@@ -84,4 +96,4 @@ const FavoritePage = () => {
   );
 };
 
-export default FavoritePage;
+export default CollectionPage;

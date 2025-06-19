@@ -1,5 +1,38 @@
 import mongoose from "mongoose";
 
+const postCategories = [
+  "Technology",
+  "Programming",
+  "Design",
+  "UX/UI",
+  "Web Development",
+  "Mobile Development",
+  "Cloud Computing",
+  "DevOps",
+  "AI & Machine Learning",
+  "Data Science",
+  "Cybersecurity",
+  "Education",
+  "Photography",
+  "Marketing",
+  "Productivity",
+  "Management",
+  "Personal Growth",
+  "Entrepreneurship",
+  "Science",
+  "Finance",
+  "Health & Wellness",
+  "Travel",
+  "Entertainment",
+  "News",
+  "Tutorial",
+  "Case Study",
+  "Opinion",
+  "Announcement",
+  "Note",
+  "Undefined",
+];
+
 const postSchema = new mongoose.Schema(
   {
     user: {
@@ -22,6 +55,11 @@ const postSchema = new mongoose.Schema(
     originalFileName: {
       type: String,
       default: null,
+    },
+    category: {
+      type: String,
+      enum: postCategories,
+      default: "Undefined",
     },
     likes: [
       {

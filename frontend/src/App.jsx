@@ -16,7 +16,8 @@ import { Toaster } from "react-hot-toast";
 import PostPage from "./pages/PostPage";
 
 import { Provider } from "@/components/ui/provider";
-import FavoritePage from "./pages/FavoritePage";
+import FavoritePage from "./pages/CollectionPage";
+import CollectionPage from "./pages/CollectionPage";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore();
@@ -66,7 +67,7 @@ const App = () => {
           />
           <Route
             path="/mycollection"
-            element={authUser ? <FavoritePage /> : <Navigate to="/login" />}
+            element={authUser ? <CollectionPage /> : <Navigate to="/login" />}
           />
         </Routes>
 

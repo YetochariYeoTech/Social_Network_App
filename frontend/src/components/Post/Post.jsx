@@ -9,6 +9,7 @@ import { useAuthStore } from "../../store/useAuthStore";
 import { usePostStore } from "../../store/usePostStore";
 // Animated UI components
 import TiltedCard from "../animatedUI/TiltedCard";
+import CommentSection from "./CommentSection";
 
 const iconsClasses =
   "h-5 w-5 cursor-pointer transition duration-200 hover:scale-110";
@@ -139,7 +140,10 @@ function PostFooter({ postId, likesCount, commentsCount }) {
           {likes}
         </span>
         <span className="flex gap-1">
-          <FaComment className={iconsClasses} />
+          <FaComment
+            className={iconsClasses}
+            onClick={() => document.getElementById("my_modal_1").showModal()}
+          />
           {commentsCount || 0}
         </span>
         <FaShareNodes className={iconsClasses} />
@@ -148,6 +152,17 @@ function PostFooter({ postId, likesCount, commentsCount }) {
         className={`${iconsClasses} transition-colors duration-100 ${postStatus.isFavorite ? "text-yellow-600" : ""}`}
         onClick={handleFavoriteAction}
       />
+      <dialog id="my_modal_1" className="modal">
+        <div className="modal-box max-w-3xl w-full">
+          <h3 className="text-lg font-bold mb-4">Comments</h3>
+          <CommentSection />
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn">Close</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 }
