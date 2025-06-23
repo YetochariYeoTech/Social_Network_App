@@ -1,23 +1,21 @@
 import Navbar from "./components/Navbar";
 
-import HomePage from "./pages/HomePage";
+import MessagePage from "./pages/MessagePage";
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
 import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
+import CollectionPage from "./pages/CollectionPage";
+import PostPage from "./pages/PostPage";
 
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuthStore } from "./store/useAuthStore";
 import { useThemeStore } from "./store/useThemeStore";
 import { useEffect } from "react";
-
 import { Loader } from "lucide-react";
 import { Toaster } from "react-hot-toast";
-import PostPage from "./pages/PostPage";
 
 import { Provider } from "@/components/ui/provider";
-import FavoritePage from "./pages/CollectionPage";
-import CollectionPage from "./pages/CollectionPage";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore();
@@ -40,13 +38,13 @@ const App = () => {
 
   return (
     <Provider>
-      <div data-theme={theme} className="flex-1 w-12/12 h-full bg-slate-500">
+      <div data-theme={theme} className="flex-1 w-12/12 h-full bg-base-100">
         <Navbar />
 
         <Routes>
           <Route
             path="/messages"
-            element={authUser ? <HomePage /> : <Navigate to="/login" />}
+            element={authUser ? <MessagePage /> : <Navigate to="/login" />}
           />
           <Route
             path="/signup"

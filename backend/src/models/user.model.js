@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+const userRoles = ["STUDENT", "TEACHER", "STAFF", "ADMIN"];
+
 const userSchema = new mongoose.Schema(
   {
     email: {
@@ -13,7 +15,7 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["STUDENT", "TEACHER", "STAFF", "ADMIN"],
+      enum: userRoles,
       default: "STUDENT",
     },
     password: {

@@ -130,6 +130,7 @@ export const likePost = async (req, res) => {
 
     // Increment likes count
     post.likesCount += 1;
+    post.likes.push(userId);
     await post.save({ session });
 
     await session.commitTransaction();
@@ -186,6 +187,7 @@ export const unlikePost = async (req, res) => {
 
     // Decrement likesCount (but prevent negative values)
     post.likesCount = Math.max(0, post.likesCount - 1);
+    post.likes.pull(userId);
     await post.save({ session });
 
     await session.commitTransaction();

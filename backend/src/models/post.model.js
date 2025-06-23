@@ -46,7 +46,8 @@ const postSchema = new mongoose.Schema(
     },
     attachmentType: {
       type: String,
-      enum: ["image", "document", "link", "text", null], // Accept onl one of those records
+      enum: ["image", "document", "link", "text", undefined],
+      default: undefined, // Accept onl one of those records
     },
     attachment: {
       type: String,

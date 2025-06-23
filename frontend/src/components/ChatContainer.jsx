@@ -7,7 +7,7 @@ import MessageSkeleton from "./skeletons/MessageSkeleton";
 import { useAuthStore } from "../store/useAuthStore";
 import { formatMessageTime } from "../lib/utils";
 
-const ChatContainer = () => {
+const ChatContainer = ({ isModal = false }) => {
   const {
     messages,
     getMessages,
@@ -49,13 +49,18 @@ const ChatContainer = () => {
   }
 
   return (
-    <div className="flex-1 flex flex-col overflow-auto">
+    <div
+      className={`flex-1 flex flex-col overflow-auto ${
+        isModal ? "h-[80vh] md:h-auto" : ""
+      }`}
+      style={isModal ? { maxHeight: "80vh" } : {}}
+    >
       <ChatHeader />
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((message) => (
+        {messages.map((message, index) => (
           <div
-            key={message._id}
+            key={`${message._id}-${index}`}
             className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"}`}
             ref={messageEndRef}
           >

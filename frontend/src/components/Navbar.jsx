@@ -118,6 +118,7 @@ const Navbar = () => {
               className={`btn btn-sm w-full ${
                 isActive("/settings") ? "bg-primary text-white" : ""
               }`}
+              onClick={() => setIsOpen(false)}
             >
               <Settings className="w-4 h-4 mr-2" />
               Settings
@@ -130,6 +131,7 @@ const Navbar = () => {
                   className={`btn btn-sm w-full ${
                     isActive("/") ? "bg-primary text-white" : ""
                   }`}
+                  onClick={() => setIsOpen(false)}
                 >
                   <User className="w-4 h-4 mr-2" />
                   For You
@@ -140,6 +142,7 @@ const Navbar = () => {
                   className={`btn btn-sm w-full ${
                     isActive("/mycollection") ? "bg-primary text-white" : ""
                   }`}
+                  onClick={() => setIsOpen(false)}
                 >
                   <Star className="w-4 h-4 mr-2" />
                   My collection
@@ -150,6 +153,7 @@ const Navbar = () => {
                   className={`btn btn-sm w-full ${
                     isActive("/messages") ? "bg-primary text-white" : ""
                   }`}
+                  onClick={() => setIsOpen(false)}
                 >
                   <MessageCircle className="w-4 h-4 mr-2" />
                   Messages
@@ -160,6 +164,7 @@ const Navbar = () => {
                   className={`btn btn-sm w-full ${
                     isActive("/profile") ? "bg-primary text-white" : ""
                   }`}
+                  onClick={() => setIsOpen(false)}
                 >
                   <User className="w-4 h-4 mr-2" />
                   Profile

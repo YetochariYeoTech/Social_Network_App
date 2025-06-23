@@ -4,15 +4,15 @@ import { File, MessageSquare, Star, Home, Settings } from "lucide-react";
 
 const sidebarStyles = {
   container: `
-    flex flex-col space-y-2 w-full bg-white px-2 rounded-lg
+    flex flex-col text-base-content space-y-2 w-full bg-base-200 px-2 rounded-lg
   `,
   sectionTitle: `
-    text-xs font-semibold text-slate-500 uppercase tracking-wider
+    text-xs font-bold uppercase tracking-wider
     px-3 py-2 animate-fadeInRight
   `,
   navItem: `
     group flex items-center space-x-3 px-3 py-3 rounded-xl
-    text-slate-700 font-medium transition-all duration-300 ease-out
+    font-medium transition-all duration-300 ease-out
     hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50
     hover:text-indigo-600 hover:shadow-md hover:scale-[1.02]
     hover:translate-x-1 active:scale-[0.98]
@@ -44,6 +44,8 @@ const navigationItems = [
   { icon: Settings, label: "Settings", path: "/settings" },
 ];
 
+const isActive = (path) => location.pathname === path;
+
 function Sidebar() {
   const { theme } = useThemeStore();
 
@@ -63,7 +65,9 @@ function Sidebar() {
             >
               <Icon className={sidebarStyles.navIcon} />
               <span className={sidebarStyles.navText}>{item.label}</span>
-              <div className={sidebarStyles.activeDot}></div>
+              {isActive(item.path) && (
+                <div className={sidebarStyles.activeDot}></div>
+              )}
             </Link>
           );
         })}
