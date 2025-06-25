@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import Post from "./Post";
 import { usePostStore } from "../../store/usePostStore";
-import PostSkeleton from "./PostSkeleton";
+import PostSkeleton from "../skeletons/PostSkeleton";
 
 function PostList() {
   const { posts, loadingPosts, fetchPosts } = usePostStore();
