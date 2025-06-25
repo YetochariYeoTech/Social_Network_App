@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Avatar } from "@chakra-ui/react";
 
-function ProfileBadge({ name, email, profilePic }) {
+function ProfileBadge({ name = "", email = "", profilePic = "" }) {
   return (
     <Link
       to={"/profile"}
@@ -14,7 +14,7 @@ function ProfileBadge({ name, email, profilePic }) {
       </Avatar.Root>
       <div className="">
         <h3 className="font-bold">
-          {name.length > 14 ? name.slice(0, 14) + "..." : name}
+          {name?.length > 14 ? name.slice(0, 14) + "..." : name}
         </h3>
         <span className="italic text-sm">{email.slice(0, 14) + "..."}</span>
       </div>

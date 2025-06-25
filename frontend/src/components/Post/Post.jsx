@@ -92,7 +92,7 @@ function PostFooter({ postId, likesCount, commentsCount }) {
 
     if (isFavorite) setPostStatus((prev) => ({ ...prev, isFavorite: true }));
     if (isLiked) setPostStatus((prev) => ({ ...prev, isLiked: true }));
-    console.log(authUser?.favoritePosts);
+    // console.log(authUser?.favoritePosts);
   }, [authUser, postId]);
 
   async function handleFavoriteAction() {

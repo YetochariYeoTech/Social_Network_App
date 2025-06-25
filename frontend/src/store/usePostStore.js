@@ -3,7 +3,7 @@ import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 import { useAuthStore } from "./useAuthStore";
 
-import.meta.env.MODE === "development" ? "http://localhost:5001/api" : "/";
+import.meta.env.MODE === "development" ? "http://localhost:8080/api" : "/";
 
 export const usePostStore = create((set, get) => ({
   creatingPost: false,
@@ -11,6 +11,7 @@ export const usePostStore = create((set, get) => ({
   deletingPost: false,
   posts: [],
 
+  resetPosts: () => set({ posts: [] }),
   // Get posts
   fetchPosts: async () => {
     set({ loadingPosts: true });
