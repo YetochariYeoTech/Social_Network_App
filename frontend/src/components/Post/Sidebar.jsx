@@ -4,7 +4,7 @@ import { File, MessageSquare, Star, Home, Settings } from "lucide-react";
 
 const sidebarStyles = {
   container: `
-    flex flex-col text-base-content space-y-2 w-full bg-base-200 px-2 rounded-lg
+    flex flex-col text-base-content space-y-2 w-full bg-base-200 px-2 rounded-lg shadow-md
   `,
   sectionTitle: `
     text-xs font-bold uppercase tracking-wider

@@ -95,7 +95,7 @@ function NewPost() {
   ) : (
     <form
       encType="multipart/form-data"
-      className={`p-1 flex flex-col gap-3 w-full opacity-90 text-base-content rounded-lg ${!hideForm && "bg-base-300"}`}
+      className={`p-1 flex flex-col gap-3 w-full text-base-content rounded-lg ${!hideForm && "bg-base-200 shadow-md"}`}
       onSubmit={handleFormSubmit}
     >
       <div
@@ -103,7 +103,7 @@ function NewPost() {
       >
         <h1 className={hideForm ? "hidden" : ""}>Post something</h1>
         <button
-          className="btn bg-secondary text-secondary-content hover:text-base-content"
+          className="btn bg-base-300 text-base-content hover:text-base-content shadow-md"
           type="button"
           onClick={() => setHideForm(!hideForm)}
         >
@@ -146,7 +146,7 @@ function NewPost() {
         </div>
 
         {fileName && (
-          <span className="text-sm text-white font-semibold px-1">
+          <span className="text-sm text-base-content font-semibold px-1 italic opacity-70 ml-3">
             Selected file: {fileName}
           </span>
         )}
@@ -182,7 +182,7 @@ function NewPost() {
             type="submit"
             className="flex gap-1 items-center p-1.5 bg-primary text-white font-semibold rounded-lg hover:bg-white hover:text-gray-800 hover:shadow-lg shadow-black ease-in duration-100"
           >
-            <span>Publish</span>
+            <span>{creatingPost ? "Wait a bit..." : "Publish"}</span>
             <BsSendFill className="h-6 w-6" />
           </button>
         </div>

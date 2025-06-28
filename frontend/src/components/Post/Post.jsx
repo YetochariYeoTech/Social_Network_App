@@ -29,7 +29,7 @@ function Post({ post }) {
   return (
     <>
       {post && (
-        <div className="flex flex-col p-2 gap-4 bg-base-200 text-base-content rounded-lg">
+        <div className="flex flex-col p-2 gap-4 bg-base-200 text-base-content rounded-lg shadow-md">
           <div className="flex justify-between">
             <div className="flex gap-2">
               <img
@@ -49,7 +49,7 @@ function Post({ post }) {
           <p>{post.description && post.description}</p>
           <div className="">
             {post.attachmentType === "image" && (
-              <div className="w-full bg-black/30 backdrop-blur-sm rounded-lg">
+              <div className="w-full bg-base-300 backdrop-blur-sm rounded-lg">
                 <TiltedCard
                   imageSrc={`${post.attachment}`}
                   altText={`${post.attachment}`}
@@ -154,13 +154,14 @@ function PostFooter({ postId, likesCount, commentsCount }) {
       />
       <dialog id="my_modal_1" className="modal">
         <div className="modal-box max-w-3xl w-full">
-          <h3 className="text-lg font-bold mb-4">Comments</h3>
-          <CommentSection />
-          <div className="modal-action">
+          <div className="flex justify-between mb-3">
+            <h3 className="text-lg font-bold mb-4">Comments</h3>
             <form method="dialog">
               <button className="btn">Close</button>
             </form>
           </div>
+          <CommentSection />
+          <div className="modal-action"></div>
         </div>
       </dialog>
     </div>

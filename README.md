@@ -34,7 +34,7 @@ npm run build
 ### Start the app
 
 ```shell
-npm start
+npm run start-all
 ```
 
 # Social_Network_App

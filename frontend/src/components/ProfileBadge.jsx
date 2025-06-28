@@ -6,7 +6,7 @@ function ProfileBadge({ name = "", email = "", profilePic = "" }) {
   return (
     <Link
       to={"/profile"}
-      className="flex my-auto bg-base-200 text-base-content rounded-lg pl-1 pt-1 pb-1 gap-2 hover:scale-[1.01] transition-transform duration-200"
+      className="flex my-auto bg-base-200 text-base-content rounded-lg pl-1 pt-1 pb-1 gap-2 hover:scale-[1.01] transition-transform duration-200 shadow-md"
     >
       <Avatar.Root size="lg">
         <Avatar.Fallback name={name} />
