@@ -104,6 +104,30 @@ export const likePost = async (req, res) => {
     post.likesCount += 1;
     await post.save({ session });
 
+    // Create a new notification for the post author
+    const notification = new Notification({
+      recipient: post.user, // The author of the post
+      sender: userId, // The user who liked the post
+      type: "LIKE",
+      target: postId,
+      targetModel: "POST",
+    });
+
+    // Save the notification within the transaction
+    await notification.save({ session });
+
+    // Add the notification to the recipient's notifications and unreadNotifications arrays
+    await User.findByIdAndUpdate(
+      post.user,
+      {
+        $push: {
+          notifications: notification._id,
+          unreadNotifications: notification._id,
+        },
+      },
+      { session }
+    );
+
     // Commit the transaction
     await session.commitTransaction();
     session.endSession();
