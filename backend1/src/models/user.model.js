@@ -67,6 +67,47 @@ const userSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Portfolio",
     },
+    countFollowers: {
+      type: Number,
+      default: 0,
+    },
+    followers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: [],
+      },
+    ],
+    countFriends: {
+      type: Number,
+      default: 0,
+    },
+    friends: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: [],
+      },
+    ],
+    notifications: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Notification",
+      },
+    ],
+    unreadNotifications: {
+      type: Map,
+      of: [{ type: mongoose.Schema.Types.ObjectId, ref: "Notification" }],
+      default: {},
+    },
+    failedLoginAttempts: {
+      type: Number,
+      default: 0,
+    },
+    lockUntil: {
+      type: Number,
+      default: null,
+    },
   },
   { timestamps: true }
 );

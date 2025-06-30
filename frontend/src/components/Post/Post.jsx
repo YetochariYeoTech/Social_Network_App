@@ -10,6 +10,7 @@ import { usePostStore } from "../../store/usePostStore";
 // Animated UI components
 import TiltedCard from "../animatedUI/TiltedCard";
 import CommentSection from "./CommentSection";
+import { Button, Menu, Portal } from "@chakra-ui/react";
 
 const iconsClasses =
   "h-5 w-5 cursor-pointer transition duration-200 hover:scale-110";
@@ -44,17 +45,17 @@ function Post({ post }) {
                 </p>
               </span>
             </div>
-            <MdOutlineMoreHoriz className="h-8 w-8 cursor-pointer" />
+            <ActionModal postId={post.postId} />
           </div>
           <p>{post.description && post.description}</p>
           <div className="">
             {post.attachmentType === "image" && (
-              <div className="w-full bg-base-300 backdrop-blur-sm rounded-lg">
+              <div className="w-full bg-base-300 rounded-lg">
                 <TiltedCard
                   imageSrc={`${post.attachment}`}
                   altText={`${post.attachment}`}
-                  scaleOnHover={1.02}
-                  rotateAmplitude={5}
+                  scaleOnHover={1.01}
+                  rotateAmplitude={1}
                 />
                 {/* <img
                   src={`${post.attachment}`}
@@ -90,9 +91,11 @@ function PostFooter({ postId, likesCount, commentsCount }) {
     const isFavorite = authUser?.favoritePosts?.includes(postId);
     const isLiked = authUser?.likedPosts?.includes(postId);
 
-    if (isFavorite) setPostStatus((prev) => ({ ...prev, isFavorite: true }));
-    if (isLiked) setPostStatus((prev) => ({ ...prev, isLiked: true }));
-    // console.log(authUser?.favoritePosts);
+    setPostStatus((prev) => ({
+      ...prev,
+      isFavorite: isFavorite,
+      isLiked: isLiked,
+    }));
   }, [authUser, postId]);
 
   async function handleFavoriteAction() {
@@ -134,7 +137,7 @@ function PostFooter({ postId, likesCount, commentsCount }) {
       <span className="flex gap-3">
         <span className="flex gap-1">
           <BiSolidLike
-            className={`${iconsClasses} ${postStatus.isLiked ? "text-blue-500" : ""}`}
+            className={`${iconsClasses} ${postStatus.isLiked ? "text-blue-400" : ""}`}
             onClick={handleLikeAction}
           />
           {likes}
@@ -149,7 +152,7 @@ function PostFooter({ postId, likesCount, commentsCount }) {
         <FaShareNodes className={iconsClasses} />
       </span>
       <FaBookmark
-        className={`${iconsClasses} transition-colors duration-100 ${postStatus.isFavorite ? "text-yellow-600" : ""}`}
+        className={`${iconsClasses} transition-colors duration-100 ${postStatus.isFavorite ? "text-blue-400" : ""}`}
         onClick={handleFavoriteAction}
       />
       <dialog id="my_modal_1" className="modal">
@@ -160,11 +163,32 @@ function PostFooter({ postId, likesCount, commentsCount }) {
               <button className="btn">Close</button>
             </form>
           </div>
+          ,
           <CommentSection />
           <div className="modal-action"></div>
         </div>
       </dialog>
     </div>
+  );
+}
+
+function ActionModal({ postId = null }) {
+  return (
+    <Menu.Root>
+      <Menu.Trigger asChild>
+        <MdOutlineMoreHoriz className="h-8 w-8 cursor-pointer" />
+      </Menu.Trigger>
+      <Portal>
+        <Menu.Positioner>
+          <Menu.Content>
+            <Menu.Item value="new-txt-a">Repost</Menu.Item>
+            <Menu.Item value="new-file-a">Report</Menu.Item>
+            <Menu.Item value="new-win-a">Delete</Menu.Item>
+            <Menu.Item value="open-file-a">Open File...</Menu.Item>
+          </Menu.Content>
+        </Menu.Positioner>
+      </Portal>
+    </Menu.Root>
   );
 }
 

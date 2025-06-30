@@ -1,7 +1,10 @@
 import express from "express";
+import { body } from "express-validator";
 import { protectRoute } from "../middleware/auth.middleware.js";
 import {
   addToFavorites,
+  createComment,
+  deleteComment,
   likePost,
   removeFromFavorites,
   unlikePost,
@@ -18,5 +21,12 @@ router.post("/likes/:postId", protectRoute, likePost);
 router.delete("/likes/:postId", protectRoute, unlikePost);
 
 // Comments routes
+router.post(
+  "/comments/:postId",
+  protectRoute,
+  [body("content").notEmpty().withMessage("Content is required")],
+  createComment
+);
+router.delete("/comments/:commentId", protectRoute, deleteComment);
 
 export default router;

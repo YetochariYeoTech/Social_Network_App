@@ -14,3 +14,13 @@ export const generateToken = (userId, res) => {
 
   return token;
 };
+
+export function extractCloudinaryPublicId(url) {
+  try {
+    const parts = url.split("/");
+    const fileName = parts[parts.length - 1]; // e.g. "abc123xyz.jpg"
+    return fileName.split(".")[0]; // remove file extension
+  } catch {
+    return null;
+  }
+}

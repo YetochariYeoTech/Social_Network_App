@@ -1,4 +1,5 @@
 import express from "express";
+import { body } from "express-validator";
 import { protectRoute } from "../middleware/auth.middleware.js";
 import userToPostRoutes from "./userToPost.route.js";
 import {
@@ -9,7 +10,17 @@ import {
 
 const router = express.Router();
 
-router.post("/createPost", protectRoute, createPost);
+router.post(
+  "/createPost",
+  protectRoute,
+  [
+    body("description").optional(),
+    body("attachment").optional(),
+    body("attachmentType").optional(),
+    body("originalFileName").optional(),
+  ],
+  createPost
+);
 router.get("/", protectRoute, getPosts);
 router.delete("/deletePost/:postId", protectRoute, deletePost);
 

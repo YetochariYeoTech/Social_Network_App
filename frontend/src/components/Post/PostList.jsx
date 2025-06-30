@@ -7,12 +7,8 @@ function PostList() {
   const { posts, loadingPosts, fetchPosts } = usePostStore();
 
   useEffect(() => {
-    usePostStore.setState({ loadingPosts: true });
-
-    setTimeout(() => {
-      fetchPosts(); // Fetch posts when the component mounts
-      // console.log(posts);
-    }, 1000);
+    fetchPosts();
+    console.log(posts); // Fetch posts when the component mounts
   }, []);
 
   return (
