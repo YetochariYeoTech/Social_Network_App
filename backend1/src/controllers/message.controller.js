@@ -1,14 +1,13 @@
 import User from "../models/user.model.js";
 import Message from "../models/message.model.js";
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 
 import cloudinary from "../lib/cloudinary.js";
-import { getReceiverSocketId, io } from "../lib/socket.js";
+// import { getReceiverSocketId, io } from "../lib/socket.js";
 import eventEmitter from "../lib/events.js";
 import { validationResult } from "express-validator";
 
 // Helper function for consistent error responses
-
 
 export const getUsersForSidebar = async (req, res) => {
   try {

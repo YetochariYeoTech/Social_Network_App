@@ -50,44 +50,34 @@ eventEmitter.on("newMessage", async (message) => {
   }
 });
 
-// Listen for the 'newFollow' event
-eventEmitter.on("newFollow", async ({ followerId, followingId }) => {
-  try {
-    // Create a new notification
-    const notification = new Notification({
-      recipient: followingId,
-      sender: followerId,
-      type: "FOLLOW",
-    });
+eventEmitter.on("newComment", async ({ comment, postAuthor }) => {
+  // Start a Mongoose session for transaction
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-    // Save the notification to the database
-    await notification.save();
-
-    // Get the receiver's socket ID
-    const receiverSocketId = getReceiverSocketId(followingId);
-
-    // If the receiver is connected, emit a 'newNotification' event
-    if (receiverSocketId) {
-      io.to(receiverSocketId).emit("newNotification", notification);
-    }
-  } catch (error) {
-    console.error("Error in newFollow event listener:", error.message);
-  }
-});
-
-// Listen for the 'newLike' event
-eventEmitter.on("newLike", async ({ postId, userId, postAuthor }) => {
   try {
     // Create a new notification
     const notification = new Notification({
       recipient: postAuthor,
-      sender: userId,
-      type: "LIKE",
-      target: postId,
+      sender: comment.user,
+      type: "COMMENT",
+      target: comment.post,
+      targetModel: "POST",
     });
 
-    // Save the notification to the database
-    await notification.save();
+    // Save the notification to the database within the transaction
+    await notification.save({ session });
+
+    // Update the recipient's unreadNotifications to include the new notification ID
+    await User.findByIdAndUpdate(
+      postAuthor,
+      { $push: { unreadNotifications: notification._id } },
+      { session }
+    );
+
+    // Commit the transaction to save all changes
+    await session.commitTransaction();
+    session.endSession();
 
     // Get the receiver's socket ID
     const receiverSocketId = getReceiverSocketId(postAuthor);
@@ -97,6 +87,53 @@ eventEmitter.on("newLike", async ({ postId, userId, postAuthor }) => {
       io.to(receiverSocketId).emit("newNotification", notification);
     }
   } catch (error) {
-    console.error("Error in newLike event listener:", error.message);
+    // If any error occurs, abort the transaction
+    await session.abortTransaction();
+    session.endSession();
+    console.error("Error in newComment event listener:", error.message);
+  }
+});
+
+eventEmitter.on("newEvent", async ({ event, creatorId }) => {
+  // Start a Mongoose session for transaction
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    // Create a new notification
+    const notification = new Notification({
+      recipient: creatorId,
+      sender: event.creator, // Assuming event.creator is the user who created the event
+      type: "EVENT",
+      target: event._id,
+      targetModel: "EVENT",
+    });
+
+    // Save the notification to the database within the transaction
+    await notification.save({ session });
+
+    // Update the recipient's unreadNotifications to include the new notification ID
+    await User.findByIdAndUpdate(
+      creatorId,
+      { $push: { unreadNotifications: notification._id } },
+      { session }
+    );
+
+    // Commit the transaction to save all changes
+    await session.commitTransaction();
+    session.endSession();
+
+    // Get the receiver's socket ID
+    const receiverSocketId = getReceiverSocketId(creatorId);
+
+    // If the receiver is connected, emit a 'newNotification' event
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newNotification", notification);
+    }
+  } catch (error) {
+    // If any error occurs, abort the transaction
+    await session.abortTransaction();
+    session.endSession();
+    console.error("Error in newEvent event listener:", error.message);
   }
 });

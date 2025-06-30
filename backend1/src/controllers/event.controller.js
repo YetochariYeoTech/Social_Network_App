@@ -1,5 +1,6 @@
 import Event from '../models/event.model.js';
 import User from '../models/user.model.js';
+import eventEmitter from "../lib/events.js";
 
 /**
  * @desc Create a new event
@@ -21,6 +22,9 @@ export const createEvent = async (req, res) => {
     });
 
     await event.save();
+
+    // Emit newEvent event for notification
+    eventEmitter.emit("newEvent", { event, creatorId });
 
     res.status(201).json(event);
   } catch (error) {

@@ -2,6 +2,7 @@ import User from "../models/user.model.js";
 import Post from "../models/post.model.js";
 import mongoose from "mongoose";
 import Comment from "../models/comment.model.js";
+import Notification from "../models/notification.model.js";
 import eventEmitter from "../lib/events.js";
 import { validationResult } from "express-validator";
 
@@ -162,6 +163,28 @@ export const unlikePost = async (req, res) => {
     post.likes.pull(userId);
     post.likesCount = Math.max(0, post.likesCount - 1);
     await post.save({ session });
+
+    // Find and delete the corresponding notification
+    const deletedNotification = await Notification.findOneAndDelete({
+      recipient: post.user, // The author of the post received the like notification
+      sender: userId, // The user who unliked the post
+      type: "LIKE",
+      target: postId,
+    }).session(session);
+
+    // If a notification was found and deleted, remove its ID from the recipient's unreadNotifications and notifications arrays
+    if (deletedNotification) {
+      await User.findByIdAndUpdate(
+        post.user,
+        {
+          $pull: {
+            unreadNotifications: deletedNotification._id,
+            notifications: deletedNotification._id,
+          },
+        },
+        { session }
+      );
+    }
 
     await session.commitTransaction();
     session.endSession();

@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Comment from "../models/comment.model.js";
 import Post from "../models/post.model.js";
+import eventEmitter from "../lib/events.js";
 
 /**
  * @desc Create a new comment
@@ -34,6 +35,9 @@ export const createComment = async (req, res) => {
 
     await session.commitTransaction();
     session.endSession();
+
+    // Emit newComment event for notification
+    eventEmitter.emit("newComment", { comment, postAuthor: post.user });
 
     res.status(201).json(comment);
   } catch (error) {
