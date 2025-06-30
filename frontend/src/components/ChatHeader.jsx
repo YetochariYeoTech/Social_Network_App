@@ -31,7 +31,7 @@ const ChatHeader = () => {
 
         {/* Close button */}
         <button
-          className="hidden lg:visible"
+          className="hidden lg:flex"
           onClick={() => setSelectedUser(null)}
         >
           <X />

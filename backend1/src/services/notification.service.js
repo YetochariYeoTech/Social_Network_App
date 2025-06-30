@@ -40,6 +40,7 @@ eventEmitter.on("newMessage", async (message) => {
 
     // If the receiver is connected, emit a 'newNotification' event
     if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newMessage", message);
       io.to(receiverSocketId).emit("newNotification", notification);
     }
   } catch (error) {
