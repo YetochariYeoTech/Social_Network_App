@@ -14,8 +14,8 @@ const notificationSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["like", "comment", "follower", "message"],
-      required: true,
+      enum: ["like", "comment", "follower", "message", "MESSAGE"],
+      required: true
     },
     target: {
       type: mongoose.Schema.Types.ObjectId,
@@ -28,7 +28,7 @@ const notificationSchema = new mongoose.Schema(
     targetModel: {
       type: String,
       required: true,
-      enum: ["Post", "User", "Message"],
+      enum: ["POST", "USER", "MESSAGE", "EVENT", "FOLLOW", "GROUP", "COMMENT"],
     },
     isRead: {
       type: Boolean,

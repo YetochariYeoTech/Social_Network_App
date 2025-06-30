@@ -95,11 +95,12 @@ const userSchema = new mongoose.Schema(
         ref: "Notification",
       },
     ],
-    unreadNotifications: {
-      type: Map,
-      of: [{ type: mongoose.Schema.Types.ObjectId, ref: "Notification" }],
-      default: {},
-    },
+    unreadNotifications: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Notification",
+      },
+    ],
     failedLoginAttempts: {
       type: Number,
       default: 0,
