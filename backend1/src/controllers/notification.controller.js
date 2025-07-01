@@ -9,12 +9,102 @@ import User from "../models/user.model.js";
 export const getNotifications = async (req, res) => {
   try {
     const userId = req.user._id;
-    const notifications = await Notification.find({ recipient: userId })
-      .populate("sender", "username profilePicture")
-      .populate("target");
-    res.status(200).json(notifications);
+
+    const groupedNotifications = await Notification.aggregate([
+      {
+        $match: { recipient: userId },
+      },
+      // Populate sender
+      {
+        $lookup: {
+          from: "users", // Collection name for User model
+          localField: "sender",
+          foreignField: "_id",
+          as: "sender",
+        },
+      },
+      {
+        $unwind: "$sender",
+      },
+      // Populate target based on targetModel
+      {
+        $lookup: {
+          from: "messages", // Collection name for Message model
+          localField: "target",
+          foreignField: "_id",
+          as: "messageTarget",
+        },
+      },
+      {
+        $lookup: {
+          from: "posts", // Collection name for Post model
+          localField: "target",
+          foreignField: "_id",
+          as: "postTarget",
+        },
+      },
+      {
+        $lookup: {
+          from: "events", // Collection name for Event model
+          localField: "target",
+          foreignField: "_id",
+          as: "eventTarget",
+        },
+      },
+      {
+        $addFields: {
+          target: {
+            $cond: {
+              if: { $eq: ["$targetModel", "MESSAGE"] },
+              then: { $arrayElemAt: ["$messageTarget", 0] },
+              else: {
+                $cond: {
+                  if: { $eq: ["$targetModel", "POST"] },
+                  then: { $arrayElemAt: ["$postTarget", 0] },
+                  else: {
+                    $cond: {
+                      if: { $eq: ["$targetModel", "EVENT"] },
+                      then: { $arrayElemAt: ["$eventTarget", 0] },
+                      else: null, // Handle other targetModels or leave as null
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      // Remove temporary lookup fields
+      {
+        $project: {
+          messageTarget: 0,
+          postTarget: 0,
+          eventTarget: 0,
+        },
+      },
+      // Group by type
+      {
+        $group: {
+          _id: "$type",
+          notifications: { $push: "$ROOT" },
+        },
+      },
+      // Transform array of grouped objects into a single object
+      {
+        $group: {
+          _id: null, // Group all documents into a single one
+          data: { $push: { k: "$_id", v: "$notifications" } },
+        },
+      },
+      {
+        $replaceRoot: { newRoot: { $arrayToObject: "$data" } },
+      },
+    ]);
+
+    res.status(200).json(groupedNotifications);
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    console.error("Error in getNotifications:", error.message);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
