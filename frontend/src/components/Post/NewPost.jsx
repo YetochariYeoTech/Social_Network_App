@@ -99,11 +99,11 @@ function NewPost() {
       onSubmit={handleFormSubmit}
     >
       <div
-        className={`flex  ${hideForm ? "justify-end" : "pb-3 justify-between border-b border-3 border-gray-600"}`}
+        className={`flex  ${hideForm ? "justify-end" : "pb-3 justify-between border-b border-3"}`}
       >
         <h1 className={hideForm ? "hidden" : ""}>Post something</h1>
         <button
-          className="btn bg-base-300 text-base-content hover:text-base-content shadow-md"
+          className="btn bg-primary shadow-sm shadow-primary text-primary-content border-none hover:text-base-content"
           type="button"
           onClick={() => setHideForm(!hideForm)}
         >
@@ -114,7 +114,7 @@ function NewPost() {
             </>
           ) : (
             <>
-              <GrHide className="h-5 w-5" />
+              <GrHide className="h-5 w-5 " />
               Hide form
             </>
           )}

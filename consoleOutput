@@ -1,0 +1,2 @@
+CommentInput.jsx:12 Uncaught (in promise) TypeError: commentsCountSetter is not a function
+    at handleSubmit (CommentInput.jsx:12:5)

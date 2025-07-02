@@ -11,6 +11,8 @@ import { usePostStore } from "../../store/usePostStore";
 import TiltedCard from "../animatedUI/TiltedCard";
 import CommentSection from "./CommentSection";
 import { Button, Menu, Portal } from "@chakra-ui/react";
+import { useShallow } from "zustand/shallow";
+import { useCommentStore } from "../../store/useCommentStore";
 
 const iconsClasses =
   "h-5 w-5 cursor-pointer transition duration-200 hover:scale-110";
@@ -83,9 +85,15 @@ function PostFooter({ postId, likesCount, commentsCount }) {
     isFavorite: false,
   });
   const [likes, setLikes] = useState(likesCount);
-  const { authUser } = useAuthStore();
+  const [commentsCounterLocal, setCommentsCounterLocal] =
+    useState(commentsCount);
+  const [modalIsCharged, setmodalIsCharged] = useState(false); // Used to prevent many console.logs from each CommentSection displays. The solution is then to dont display by default
+  const { authUser } = useAuthStore(
+    useShallow((state) => ({ authUser: state.authUser }))
+  );
   const { addToFavorites, removeFromFavorites, addToLiked, removeFromLiked } =
     usePostStore();
+  const { resetComments } = useCommentStore();
 
   useEffect(() => {
     const isFavorite = authUser?.favoritePosts?.includes(postId);
@@ -132,6 +140,18 @@ function PostFooter({ postId, likesCount, commentsCount }) {
     return;
   }
 
+  // This function is used to close the modal
+  function handleCloseModal() {
+    setmodalIsCharged(false);
+    resetComments();
+  }
+
+  // This function is used to open the modal
+  function handleOpenModal() {
+    setmodalIsCharged(true);
+    document.getElementById(`${postId}_my_modal_1`).showModal();
+  }
+
   return (
     <div className="flex justify-between">
       <span className="flex gap-3">
@@ -143,11 +163,8 @@ function PostFooter({ postId, likesCount, commentsCount }) {
           {likes}
         </span>
         <span className="flex gap-1">
-          <FaComment
-            className={iconsClasses}
-            onClick={() => document.getElementById("my_modal_1").showModal()}
-          />
-          {commentsCount || 0}
+          <FaComment className={iconsClasses} onClick={handleOpenModal} />
+          {commentsCounterLocal || 0}
         </span>
         <FaShareNodes className={iconsClasses} />
       </span>
@@ -155,17 +172,31 @@ function PostFooter({ postId, likesCount, commentsCount }) {
         className={`${iconsClasses} transition-colors duration-100 ${postStatus.isFavorite ? "text-blue-400" : ""}`}
         onClick={handleFavoriteAction}
       />
-      <dialog id="my_modal_1" className="modal">
-        <div className="modal-box max-w-3xl w-full">
-          <div className="flex justify-between mb-3">
-            <h3 className="text-lg font-bold mb-4">Comments</h3>
+      <dialog
+        id={`${postId}_my_modal_1`}
+        className="modal"
+        onClose={resetComments}
+      >
+        <div className="modal-box bg-base-300 max-w-3xl w-full flex flex-col">
+          <div className="flex justify-between items-center p-4 border-b border-base-content/10 sticky top-0 bg-base-300 z-10">
+            <h3 className="text-lg font-bold">Comments</h3>
             <form method="dialog">
-              <button className="btn">Close</button>
+              <button
+                className="btn btn-sm btn-circle btn-ghost"
+                onClick={handleCloseModal}
+              >
+                ✕
+              </button>
             </form>
           </div>
-          ,
-          <CommentSection />
-          <div className="modal-action"></div>
+          <div className="flex-grow overflow-y-auto p-4">
+            {modalIsCharged && (
+              <CommentSection
+                postId={postId}
+                commentsCountSetter={setCommentsCounterLocal}
+              />
+            )}
+          </div>
         </div>
       </dialog>
     </div>

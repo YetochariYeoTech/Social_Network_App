@@ -13,8 +13,8 @@ export const createComment = async (req, res) => {
   session.startTransaction();
   try {
     const { postId, content } = req.body;
-    const userId = req.user._id;
-
+    const userId = req.user;
+    console.log(req.body);
     const post = await Post.findById(postId).session(session);
     if (!post) {
       await session.abortTransaction();
@@ -38,7 +38,7 @@ export const createComment = async (req, res) => {
 
     // Emit newComment event for notification
     eventEmitter.emit("newComment", { comment, postAuthor: post.user });
-
+    // console.log(comment);
     res.status(201).json(comment);
   } catch (error) {
     await session.abortTransaction();
@@ -55,6 +55,9 @@ export const createComment = async (req, res) => {
 export const getCommentsByPost = async (req, res) => {
   try {
     const { postId } = req.params;
+    const page = parseInt(req.query.page) || 1; // Current page, default to 1
+    const limit = parseInt(req.query.limit) || 20; // Comments per page, default to 20
+    const skip = (page - 1) * limit;
 
     // Check if the post exists
     const post = await Post.findById(postId);
@@ -62,11 +65,21 @@ export const getCommentsByPost = async (req, res) => {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    const comments = await Comment.find({ post: postId }).populate(
-      "user",
-      "fullName profilePic"
-    );
-    res.status(200).json(comments);
+    const comments = await Comment.find({ post: postId })
+      .populate("user", "_id fullName profilePic createdAt")
+      .sort({ createdAt: -1 }) // Sort by creation date, latest first
+      .skip(skip)
+      .limit(limit);
+
+    const totalComments = await Comment.countDocuments({ post: postId });
+    const totalPages = Math.ceil(totalComments / limit);
+
+    res.status(200).json({
+      comments,
+      currentPage: page,
+      totalPages,
+      totalComments,
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
   }

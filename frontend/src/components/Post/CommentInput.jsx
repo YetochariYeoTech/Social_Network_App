@@ -1,13 +1,16 @@
 import React, { useState } from "react";
+import { useCommentStore } from "../../store/useCommentStore";
 
-const CommentInput = ({ onAddComment }) => {
-  const [inputValue, setInputValue] = useState("");
+const CommentInput = ({ postId, increasePostCommentsCounter }) => {
+  const [content, setContent] = useState("");
+  const { addComment, isLoading } = useCommentStore();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!inputValue.trim()) return;
-    onAddComment(inputValue);
-    setInputValue("");
+    if (!content.trim()) return;
+    await addComment(postId, content);
+    increasePostCommentsCounter();
+    setContent("");
   };
 
   return (
@@ -15,11 +18,16 @@ const CommentInput = ({ onAddComment }) => {
       <textarea
         className="textarea textarea-bordered w-full min-h-[50px]"
         placeholder="Add your comment..."
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        disabled={isLoading}
       ></textarea>
-      <button type="submit" className="btn btn-primary self-end">
-        Post Comment
+      <button
+        type="submit"
+        className="btn bg-primary text-primary-content self-end"
+        disabled={isLoading}
+      >
+        {isLoading ? "Posting..." : "Post Comment"}
       </button>
     </form>
   );

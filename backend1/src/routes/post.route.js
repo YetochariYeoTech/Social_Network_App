@@ -10,6 +10,8 @@ import {
 
 const router = express.Router();
 
+router.get("/", protectRoute, getPosts);
+
 router.post(
   "/createPost",
   protectRoute,
@@ -21,9 +23,8 @@ router.post(
   ],
   createPost
 );
-router.get("/", protectRoute, getPosts);
-router.delete("/deletePost/:postId", protectRoute, deletePost);
 
+router.delete("/deletePost/:postId", protectRoute, deletePost);
 // ✅ Correct usage: Nest userToPostRoutes under /actions
 router.use("/actions", userToPostRoutes);
 

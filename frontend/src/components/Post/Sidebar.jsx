@@ -47,7 +47,7 @@ const navigationItems = [
 const isActive = (path) => location.pathname === path;
 
 function Sidebar() {
-  const { theme } = useThemeStore();
+  // const { theme } = useThemeStore();
 
   return (
     <nav className={sidebarStyles.container}>

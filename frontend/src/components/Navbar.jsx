@@ -38,7 +38,7 @@ const Navbar = () => {
           <Link
             to="/settings"
             className={`btn btn-sm gap-2 ${
-              isActive("/settings") ? "bg-primary text-white" : ""
+              isActive("/settings") ? "bg-primary text-primary-content" : ""
             }`}
           >
             <Settings className="w-4 h-4" />
@@ -50,7 +50,7 @@ const Navbar = () => {
               <Link
                 to="/"
                 className={`btn btn-sm gap-2 ${
-                  isActive("/") ? "bg-primary text-white" : ""
+                  isActive("/") ? "bg-primary text-primary-content" : ""
                 }`}
               >
                 <User className="w-5 h-5" />
@@ -59,7 +59,9 @@ const Navbar = () => {
               <Link
                 to="/mycollection"
                 className={`btn btn-sm gap-2 ${
-                  isActive("/mycollection") ? "bg-primary text-white" : ""
+                  isActive("/mycollection")
+                    ? "bg-primary text-primary-content"
+                    : ""
                 }`}
               >
                 <Star className="w-5 h-5" />
@@ -69,7 +71,7 @@ const Navbar = () => {
               <Link
                 to="/messages"
                 className={`btn btn-sm gap-2 ${
-                  isActive("/messages") ? "bg-primary text-white" : ""
+                  isActive("/messages") ? "bg-primary text-primary-content" : ""
                 }`}
               >
                 <MessageCircle className="w-5 h-5" />
@@ -79,7 +81,7 @@ const Navbar = () => {
               <Link
                 to="/profile"
                 className={`btn btn-sm gap-2 ${
-                  isActive("/profile") ? "bg-primary text-white" : ""
+                  isActive("/profile") ? "bg-primary text-primary-content" : ""
                 }`}
               >
                 <User className="w-5 h-5" />
@@ -116,7 +118,7 @@ const Navbar = () => {
             <Link
               to="/settings"
               className={`btn btn-sm w-full ${
-                isActive("/settings") ? "bg-primary text-white" : ""
+                isActive("/settings") ? "bg-primary text-primary-content" : ""
               }`}
               onClick={() => setIsOpen(false)}
             >
@@ -129,7 +131,7 @@ const Navbar = () => {
                 <Link
                   to="/"
                   className={`btn btn-sm w-full ${
-                    isActive("/") ? "bg-primary text-white" : ""
+                    isActive("/") ? "bg-primary text-primary-content" : ""
                   }`}
                   onClick={() => setIsOpen(false)}
                 >
@@ -140,7 +142,9 @@ const Navbar = () => {
                 <Link
                   to="/mycollection"
                   className={`btn btn-sm w-full ${
-                    isActive("/mycollection") ? "bg-primary text-white" : ""
+                    isActive("/mycollection")
+                      ? "bg-primary text-primary-content"
+                      : ""
                   }`}
                   onClick={() => setIsOpen(false)}
                 >
@@ -151,7 +155,9 @@ const Navbar = () => {
                 <Link
                   to="/messages"
                   className={`btn btn-sm w-full ${
-                    isActive("/messages") ? "bg-primary text-white" : ""
+                    isActive("/messages")
+                      ? "bg-primary text-primary-content"
+                      : ""
                   }`}
                   onClick={() => setIsOpen(false)}
                 >
@@ -162,7 +168,9 @@ const Navbar = () => {
                 <Link
                   to="/profile"
                   className={`btn btn-sm w-full ${
-                    isActive("/profile") ? "bg-primary text-white" : ""
+                    isActive("/profile")
+                      ? "bg-primary text-primary-content"
+                      : ""
                   }`}
                   onClick={() => setIsOpen(false)}
                 >
@@ -170,7 +178,13 @@ const Navbar = () => {
                   Profile
                 </Link>
 
-                <button onClick={logout} className="btn btn-sm w-full">
+                <button
+                  onClick={async () => {
+                    await setIsOpen(!isOpen);
+                    logout();
+                  }}
+                  className="btn btn-sm w-full"
+                >
                   <LogOut className="w-4 h-4 mr-2" />
                   Logout
                 </button>

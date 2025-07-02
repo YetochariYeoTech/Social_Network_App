@@ -258,14 +258,16 @@ export const createComment = async (req, res) => {
     );
 
     // Update the post with the new comment
-    post.comments.push(comment[0]._id);
+    post.comments.push(comment[0]._id); // comment[0] because we passed an array to the comment.create function. It will return an Array
     post.commentsCount += 1;
     await post.save({ session });
 
     await session.commitTransaction();
     session.endSession();
 
-    res.status(201).json({ success: true, comment: comment[0] });
+    await comment[0].populate("user", "_id fullName profilePic");
+
+    res.status(201).json(comment[0]);
   } catch (error) {
     await session.abortTransaction();
     session.endSession();

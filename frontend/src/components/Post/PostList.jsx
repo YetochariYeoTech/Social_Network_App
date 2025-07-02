@@ -8,7 +8,7 @@ function PostList() {
 
   useEffect(() => {
     fetchPosts();
-    console.log(posts); // Fetch posts when the component mounts
+    // console.log(posts); // Fetch posts when the component mounts
   }, []);
 
   return (

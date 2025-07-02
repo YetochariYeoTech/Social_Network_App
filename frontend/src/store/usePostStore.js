@@ -17,7 +17,16 @@ export const usePostStore = create((set, get) => ({
     set({ loadingPosts: true });
     try {
       const res = await axiosInstance.get("/posts");
-      set({ posts: res.data });
+      // Deduplicate posts by _id to prevent React key warnings
+      const uniquePosts = [];
+      const postIds = new Set();
+      res.data.forEach(post => {
+        if (!postIds.has(post._id)) {
+          uniquePosts.push(post);
+          postIds.add(post._id);
+        }
+      });
+      set({ posts: uniquePosts });
     } catch (error) {
       toast.error("Failed to fetch posts");
       console.error("fetchPosts error:", error);
