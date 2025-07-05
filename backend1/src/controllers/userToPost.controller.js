@@ -132,6 +132,9 @@ export const likePost = async (req, res) => {
     await session.commitTransaction();
     session.endSession();
 
+    // Emit a new event with only the necessary IDs
+    eventEmitter.emit("newPostLike", { postId: post._id, userId: user._id });
+
     const updatedUser = await User.findById(userId);
     res.status(200).json(updatedUser);
   } catch (error) {
@@ -257,6 +260,30 @@ export const createComment = async (req, res) => {
       { session }
     );
 
+    // Create a new notification for the post author
+    const notification = new Notification({
+      recipient: post.user, // The author of the post
+      sender: userId, // The user who comments the post
+      type: "COMMENT",
+      target: postId,
+      targetModel: "POST",
+    });
+
+    // Save the notification within the transaction
+    await notification.save({ session });
+
+    // Add the notification to the recipient's notifications and unreadNotifications arrays
+    await User.findByIdAndUpdate(
+      post.user,
+      {
+        $push: {
+          notifications: notification._id,
+          unreadNotifications: notification._id,
+        },
+      },
+      { session }
+    );
+
     // Update the post with the new comment
     post.comments.push(comment[0]._id); // comment[0] because we passed an array to the comment.create function. It will return an Array
     post.commentsCount += 1;
@@ -264,6 +291,9 @@ export const createComment = async (req, res) => {
 
     await session.commitTransaction();
     session.endSession();
+
+    // Emit a new event with only the necessary IDs
+    eventEmitter.emit("newComment", { notification, postAuthor: post.user });
 
     await comment[0].populate("user", "_id fullName profilePic");
 
@@ -312,6 +342,31 @@ export const deleteComment = async (req, res) => {
       post.comments.pull(comment._id);
       post.commentsCount = Math.max(0, post.commentsCount - 1);
       await post.save({ session });
+    }
+
+    post.likesCount = Math.max(0, post.likesCount - 1);
+    await post.save({ session });
+
+    // Find and delete the corresponding notification
+    const deletedNotification = await Notification.findOneAndDelete({
+      recipient: post.user, // The author of the post received the like notification
+      sender: userId, // The user who unliked the post
+      type: "COMMENT",
+      target: post._id,
+    }).session(session);
+
+    // If a notification was found and deleted, remove its ID from the recipient's unreadNotifications and notifications arrays
+    if (deletedNotification) {
+      await User.findByIdAndUpdate(
+        post.user,
+        {
+          $pull: {
+            unreadNotifications: deletedNotification._id,
+            notifications: deletedNotification._id,
+          },
+        },
+        { session }
+      );
     }
 
     // Delete the comment

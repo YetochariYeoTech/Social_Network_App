@@ -51,35 +51,8 @@ eventEmitter.on("newMessage", async (message) => {
   }
 });
 
-eventEmitter.on("newComment", async ({ comment, postAuthor }) => {
-  // Start a Mongoose session for transaction
-  const session = await mongoose.startSession();
-  session.startTransaction();
-
+eventEmitter.on("newComment", async ({ notification, postAuthor }) => {
   try {
-    // Create a new notification
-    const notification = new Notification({
-      recipient: postAuthor,
-      sender: comment.user,
-      type: "COMMENT",
-      target: comment.post,
-      targetModel: "POST",
-    });
-
-    // Save the notification to the database within the transaction
-    await notification.save({ session });
-
-    // Update the recipient's unreadNotifications to include the new notification ID
-    await User.findByIdAndUpdate(
-      postAuthor,
-      { $push: { unreadNotifications: notification._id } },
-      { session }
-    );
-
-    // Commit the transaction to save all changes
-    await session.commitTransaction();
-    session.endSession();
-
     // Get the receiver's socket ID
     const receiverSocketId = getReceiverSocketId(postAuthor);
 
@@ -89,8 +62,7 @@ eventEmitter.on("newComment", async ({ comment, postAuthor }) => {
     }
   } catch (error) {
     // If any error occurs, abort the transaction
-    await session.abortTransaction();
-    session.endSession();
+
     console.error("Error in newComment event listener:", error.message);
   }
 });
