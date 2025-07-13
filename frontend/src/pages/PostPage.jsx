@@ -4,7 +4,7 @@ import RightSidePanel from "../components/Post/RightSidePanel";
 
 const PostPage = () => {
   return (
-    <div className="flex pt-20 justify-around w-full">
+    <div className="flex pt-20 text-base-content justify-around w-full">
       {/* Hidden on small screens */}
       <div className="hidden md:block rounded w-2/12 overflow-visible">
         <LeftSidePanel />
@@ -16,7 +16,7 @@ const PostPage = () => {
       </div>
 
       {/* Right Panel */}
-      <div className="hidden md:block rounded w-2/12 bg-green-900">
+      <div className="hidden md:block rounded w-2/12">
         <RightSidePanel />
       </div>
     </div>

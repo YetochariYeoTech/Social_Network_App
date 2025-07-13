@@ -1,0 +1,79 @@
+classDiagram
+
+class User{
+  +String email
+  +String fullName
+  +String role
+  +String bio
+  +String location
+  +String profilePic
+}
+
+class Post{
+  +String description
+  +String attachmentType
+  +String category
+  +Number likesCount
+  +Number commentsCount
+}
+
+class Comment{
+  +String content
+}
+
+class Tag{
+  +String title
+}
+
+class Message{
+  +String text
+  +String image
+}
+
+class Notification{
+  +String type
+  +Boolean isRead
+}
+
+class Follow
+
+class Group{
+  +Object[] chat
+}
+
+class Portfolio{
+  +String summary
+  +Object contact
+}
+
+class Event{
+  +String title
+  +String description
+  +Date startTime
+  +Date endTime
+  +String location
+}
+
+'-- Composition: The part cannot exist without the whole
+User "1" *-- "0..*" Post : creates
+User "1" *-- "1" Portfolio : has
+Post "1" *-- "0..*" Comment : contains
+
+'-- Aggregation: The part can exist independently of the whole
+Group "1" o-- "0..*" User : has members
+Event "1" o-- "0..*" User : has attendees
+
+'-- Association: A general relationship between classes
+User "1" -- "0..*" Follow : initiates
+User "1" -- "0..*" Message : sends/receives
+User "1" -- "0..*" Notification : receives
+User "1" -- "0..*" Event : creates
+User "1" -- "0..*" Group : creates
+User "1" <|-- Follow : follower
+User "1" <|-- Follow : following
+
+Post "0..*" -- "0..*" Tag : has
+
+Comment --|> User : written by
+Message --|> User : sent by
+Notification --|> User : sent by

@@ -215,7 +215,7 @@ function ActionModal({ postId = null }) {
             <Menu.Item value="new-txt-a">Repost</Menu.Item>
             <Menu.Item value="new-file-a">Report</Menu.Item>
             <Menu.Item value="new-win-a">Delete</Menu.Item>
-            <Menu.Item value="open-file-a">Open File...</Menu.Item>
+            {/* <Menu.Item value="open-file-a">Open File...</Menu.Item> */}
           </Menu.Content>
         </Menu.Positioner>
       </Portal>
