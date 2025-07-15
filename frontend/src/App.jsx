@@ -7,6 +7,7 @@ import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
 import CollectionPage from "./pages/CollectionPage";
 import PostPage from "./pages/PostPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuthStore } from "./store/useAuthStore";
@@ -67,6 +68,7 @@ const App = () => {
             path="/mycollection"
             element={authUser ? <CollectionPage /> : <Navigate to="/login" />}
           />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
 
         <Toaster />

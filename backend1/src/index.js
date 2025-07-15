@@ -8,6 +8,7 @@ import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "././routes/message.route.js";
 import postRoutes from "./routes/post.route.js";
 import notificationRoutes from "./routes/notification.route.js";
+import eventRoutes from "./routes/event.route.js";
 import { initializeSocket } from "./lib/socket.js";
 import "./services/notification.service.js";
 
@@ -38,6 +39,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/events", eventRoutes);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "/frontend/dist")));

@@ -38,7 +38,9 @@ const Navbar = () => {
           <Link
             to="/settings"
             className={`btn btn-sm gap-2 ${
-              isActive("/settings") ? "bg-primary text-primary-content" : ""
+              isActive("/settings")
+                ? "bg-primary text-primary-content hover:text-base-content"
+                : ""
             }`}
           >
             <Settings className="w-4 h-4" />
@@ -50,7 +52,9 @@ const Navbar = () => {
               <Link
                 to="/"
                 className={`btn btn-sm gap-2 ${
-                  isActive("/") ? "bg-primary text-primary-content" : ""
+                  isActive("/")
+                    ? "bg-primary text-primary-content hover:text-base-content"
+                    : ""
                 }`}
               >
                 <User className="w-5 h-5" />
@@ -60,7 +64,7 @@ const Navbar = () => {
                 to="/mycollection"
                 className={`btn btn-sm gap-2 ${
                   isActive("/mycollection")
-                    ? "bg-primary text-primary-content"
+                    ? "bg-primary text-primary-content hover:text-base-content"
                     : ""
                 }`}
               >
@@ -71,7 +75,9 @@ const Navbar = () => {
               <Link
                 to="/messages"
                 className={`btn btn-sm gap-2 ${
-                  isActive("/messages") ? "bg-primary text-primary-content" : ""
+                  isActive("/messages")
+                    ? "bg-primary text-primary-content hover:text-base-content"
+                    : ""
                 }`}
               >
                 <MessageCircle className="w-5 h-5" />
@@ -81,7 +87,9 @@ const Navbar = () => {
               <Link
                 to="/profile"
                 className={`btn btn-sm gap-2 ${
-                  isActive("/profile") ? "bg-primary text-primary-content" : ""
+                  isActive("/profile")
+                    ? "bg-primary text-primary-content hover:text-base-content"
+                    : ""
                 }`}
               >
                 <User className="w-5 h-5" />
@@ -118,7 +126,9 @@ const Navbar = () => {
             <Link
               to="/settings"
               className={`btn btn-sm w-full ${
-                isActive("/settings") ? "bg-primary text-primary-content" : ""
+                isActive("/settings")
+                  ? "bg-primary text-primary-content hover:text-base-content"
+                  : ""
               }`}
               onClick={() => setIsOpen(false)}
             >
@@ -131,7 +141,9 @@ const Navbar = () => {
                 <Link
                   to="/"
                   className={`btn btn-sm w-full ${
-                    isActive("/") ? "bg-primary text-primary-content" : ""
+                    isActive("/")
+                      ? "bg-primary text-primary-content hover:text-base-content"
+                      : ""
                   }`}
                   onClick={() => setIsOpen(false)}
                 >
@@ -143,7 +155,7 @@ const Navbar = () => {
                   to="/mycollection"
                   className={`btn btn-sm w-full ${
                     isActive("/mycollection")
-                      ? "bg-primary text-primary-content"
+                      ? "bg-primary text-primary-content hover:text-base-content"
                       : ""
                   }`}
                   onClick={() => setIsOpen(false)}
@@ -156,7 +168,7 @@ const Navbar = () => {
                   to="/messages"
                   className={`btn btn-sm w-full ${
                     isActive("/messages")
-                      ? "bg-primary text-primary-content"
+                      ? "bg-primary text-primary-content hover:text-base-content"
                       : ""
                   }`}
                   onClick={() => setIsOpen(false)}
@@ -169,7 +181,7 @@ const Navbar = () => {
                   to="/profile"
                   className={`btn btn-sm w-full ${
                     isActive("/profile")
-                      ? "bg-primary text-primary-content"
+                      ? "bg-primary text-primary-content hover:text-base-content"
                       : ""
                   }`}
                   onClick={() => setIsOpen(false)}

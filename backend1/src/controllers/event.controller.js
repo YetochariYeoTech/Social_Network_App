@@ -1,5 +1,5 @@
-import Event from '../models/event.model.js';
-import User from '../models/user.model.js';
+import Event from "../models/event.model.js";
+import User from "../models/user.model.js";
 import eventEmitter from "../lib/events.js";
 
 /**
@@ -11,6 +11,13 @@ export const createEvent = async (req, res) => {
   try {
     const { title, description, startTime, endTime, location } = req.body;
     const creatorId = req.user._id;
+    const userRole = req.user.role;
+
+    if (startTime && endTime && new Date(startTime) >= new Date(endTime)) {
+      return res
+        .status(400)
+        .json({ message: "Start time must be before end time" });
+    }
 
     const event = new Event({
       title,
@@ -26,9 +33,14 @@ export const createEvent = async (req, res) => {
     // Emit newEvent event for notification
     eventEmitter.emit("newEvent", { event, creatorId });
 
-    res.status(201).json(event);
+    const populatedEvent = await Event.findById(event._id).populate(
+      "creator",
+      "username fullName profilePic"
+    );
+
+    res.status(201).json(populatedEvent);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: "Server error", error });
   }
 };
 
@@ -39,10 +51,12 @@ export const createEvent = async (req, res) => {
  */
 export const getEvents = async (req, res) => {
   try {
-    const events = await Event.find().populate('creator', 'username profilePicture');
+    const events = await Event.find({ startTime: { $gte: new Date() } })
+      .sort({ startTime: 1 })
+      .populate("creator", "username fullName profilePic");
     res.status(200).json(events);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: "Server error", error });
   }
 };
 
@@ -54,15 +68,17 @@ export const getEvents = async (req, res) => {
 export const getEventById = async (req, res) => {
   try {
     const { eventId } = req.params;
-    const event = await Event.findById(eventId).populate('creator', 'username profilePicture').populate('attendees', 'username profilePicture');
+    const event = await Event.findById(eventId)
+      .populate("creator", "username fullName profilePic")
+      .populate("attendees", "username profilePicture");
 
     if (!event) {
-      return res.status(404).json({ message: 'Event not found' });
+      return res.status(404).json({ message: "Event not found" });
     }
 
     res.status(200).json(event);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: "Server error", error });
   }
 };
 
@@ -80,12 +96,18 @@ export const updateEvent = async (req, res) => {
     const event = await Event.findById(eventId);
 
     if (!event) {
-      return res.status(404).json({ message: 'Event not found' });
+      return res.status(404).json({ message: "Event not found" });
     }
 
     // Check if the user is the creator of the event
     if (event.creator.toString() !== userId.toString()) {
-      return res.status(401).json({ message: 'Not authorized' });
+      return res.status(401).json({ message: "Not authorized" });
+    }
+
+    if (startTime && endTime && new Date(startTime) >= new Date(endTime)) {
+      return res
+        .status(400)
+        .json({ message: "Start time must be before end time" });
     }
 
     event.title = title || event.title;
@@ -98,7 +120,7 @@ export const updateEvent = async (req, res) => {
 
     res.status(200).json(event);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: "Server error", error });
   }
 };
 
@@ -115,19 +137,19 @@ export const deleteEvent = async (req, res) => {
     const event = await Event.findById(eventId);
 
     if (!event) {
-      return res.status(404).json({ message: 'Event not found' });
+      return res.status(404).json({ message: "Event not found" });
     }
 
     // Check if the user is the creator of the event
     if (event.creator.toString() !== userId.toString()) {
-      return res.status(401).json({ message: 'Not authorized' });
+      return res.status(401).json({ message: "Not authorized" });
     }
 
     await event.remove();
 
-    res.status(200).json({ message: 'Event removed' });
+    res.status(200).json({ message: "Event removed" });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: "Server error", error });
   }
 };
 
@@ -144,12 +166,14 @@ export const rsvpToEvent = async (req, res) => {
     const event = await Event.findById(eventId);
 
     if (!event) {
-      return res.status(404).json({ message: 'Event not found' });
+      return res.status(404).json({ message: "Event not found" });
     }
 
     // Check if the user has already RSVP'd
     if (event.attendees.includes(userId)) {
-      return res.status(400).json({ message: 'You have already RSVP\'d to this event' });
+      return res
+        .status(400)
+        .json({ message: "You have already RSVP'd to this event" });
     }
 
     event.attendees.push(userId);
@@ -157,6 +181,6 @@ export const rsvpToEvent = async (req, res) => {
 
     res.status(200).json(event);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: "Server error", error });
   }
 };

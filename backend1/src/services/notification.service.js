@@ -1,5 +1,6 @@
 import eventEmitter from "../lib/events.js";
 import Notification from "../models/notification.model.js";
+import Event from "../models/event.model.js"; // Import Event model
 import { getReceiverSocketId, io } from "../lib/socket.js";
 import User from "../models/user.model.js";
 import mongoose from "mongoose";
@@ -41,7 +42,7 @@ eventEmitter.on("newMessage", async (message) => {
     // If the receiver is connected, emit a 'newNotification' event
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("newMessage", message);
-      io.to(receiverSocketId).emit("newNotification", notification);
+      // io.to(receiverSocketId).emit("newNotification", notification);
     }
   } catch (error) {
     // If any error occurs, abort the transaction
@@ -96,12 +97,19 @@ eventEmitter.on("newEvent", async ({ event, creatorId }) => {
     await session.commitTransaction();
     session.endSession();
 
-    // Get the receiver's socket ID
-    const receiverSocketId = getReceiverSocketId(creatorId);
+    // Populate the event with creator details
+    const populatedEvent = await Event.findById(event._id).populate(
+      "creator",
+      "username fullName profilePic"
+    );
 
-    // If the receiver is connected, emit a 'newNotification' event
-    if (receiverSocketId) {
-      io.to(receiverSocketId).emit("newNotification", notification);
+    // Send the populated event to all users
+    io.emit("newEvent", populatedEvent);
+
+    // Optionally, send a specific notification to the creator
+    const creatorSocketId = getReceiverSocketId(creatorId);
+    if (creatorSocketId) {
+      io.to(creatorSocketId).emit("newNotification", notification);
     }
   } catch (error) {
     // If any error occurs, abort the transaction

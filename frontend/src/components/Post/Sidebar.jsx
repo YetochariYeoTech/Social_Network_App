@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import { useThemeStore } from "../../store/useThemeStore";
-import { File, MessageSquare, Star, Home, Settings } from "lucide-react";
+import { MessageSquare, Star, Home, Settings } from "lucide-react";
+import { MdOutlineEventNote as Event } from "react-icons/md";
+// import { useThemeStore } from "../../store/useThemeStore";
 
 const sidebarStyles = {
   container: `
@@ -30,7 +31,7 @@ const sidebarStyles = {
     transition-all duration-300 group-hover:font-semibold
   `,
   activeDot: `
-    absolute right-3 w-2 h-2 bg-indigo-500 rounded-full
+    absolute right-3 w-2 h-2 bg-base-content rounded-full
     opacity-0 group-hover:opacity-100 transition-all duration-300
     animate-pulse
   `,
@@ -38,7 +39,7 @@ const sidebarStyles = {
 
 const navigationItems = [
   { icon: Home, label: "Home", path: "/" },
-  { icon: File, label: "Files", path: "/files" },
+  { icon: Event, label: "Events", path: "/events" },
   { icon: MessageSquare, label: "Messages", path: "/messages" },
   { icon: Star, label: "My collection", path: "/mycollection" },
   { icon: Settings, label: "Settings", path: "/settings" },

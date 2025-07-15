@@ -148,3 +148,70 @@ Here's a brief overview of the main API endpoint categories:
 -   `/api/posts/actions`: Liking, favoriting, commenting on posts
 
 Refer to the respective route and controller files in `backend1/src/routes` and `backend1/src/controllers` for detailed endpoint specifications and request/response formats.
+
+## API Routes by Model
+
+### User Model
+*   `POST /api/auth/signup`: Create a new user.
+*   `POST /api/auth/login`: Login a user.
+*   `POST /api/auth/logout`: Logout a user.
+*   `PUT /api/auth/update-profile`: Update a user's profile.
+*   `GET /api/auth/check`: Check if a user is authenticated.
+*   `GET /api/messages/users`: Get all users for the sidebar.
+
+### Post Model
+*   `POST /api/posts/createPost`: Create a new post.
+*   `GET /api/posts`: Get all posts.
+*   `DELETE /api/posts/deletePost/:postId`: Delete a post.
+*   `POST /api/posts/actions/favorites/:postId`: Add a post to favorites.
+*   `DELETE /api/posts/actions/favorites/:postId`: Remove a post from favorites.
+*   `POST /api/posts/actions/likes/:postId`: Like a post.
+*   `DELETE /api/posts/actions/likes/:postId`: Unlike a post.
+
+### Comment Model
+*   `POST /api/posts/actions/:postId/comments`: Create a new comment.
+*   `GET /api/posts/actions/:postId/comments`: Get all comments for a post.
+*   `DELETE /api/posts/actions/comments/:commentId`: Delete a comment.
+
+### Message Model
+*   `GET /api/messages/:id`: Get all messages for a conversation.
+*   `POST /api/messages/send/:id`: Send a message.
+
+### Notification Model
+*   `GET /api/notifications`: Get all notifications for a user.
+*   `POST /api/notifications`: Create a notification.
+*   `PUT /api/notifications/:notificationId/read`: Mark a notification as read.
+*   `DELETE /api/notifications/:notificationId`: Delete a notification.
+*   `DELETE /api/notifications/cleanup`: Clear unread notifications for a user by category.
+
+### Event Model
+*   `POST /api/events`: Create a new event.
+*   `GET /api/events`: Get all events.
+*   `GET /api/events/:eventId`: Get a single event by ID.
+*   `PUT /api/events/:eventId`: Update an event.
+*   `DELETE /api/events/:eventId`: Delete an event.
+*   `POST /api/events/:eventId/rsvp`: RSVP to an event.
+
+### Follow Model
+*   `POST /api/follows`: Follow a user.
+*   `DELETE /api/follows/:followingId`: Unfollow a user.
+*   `GET /api/follows/:userId/followers`: Get a user's followers.
+*   `GET /api/follows/:userId/following`: Get a user's following.
+
+### Group Model
+*   `POST /api/groups`: Create a new group.
+*   `GET /api/groups`: Get all groups.
+*   `GET /api/groups/:groupId`: Get a single group by ID.
+*   `PUT /api/groups/:groupId`: Update a group.
+*   `DELETE /api/groups/:groupId`: Delete a group.
+*   `POST /api/groups/:groupId/members`: Add a member to a group.
+*   `DELETE /api/groups/:groupId/members/:memberId`: Remove a member from a group.
+
+### Portfolio Model
+*   `GET /api/portfolios/:userId`: Get a user's portfolio.
+*   `PUT /api/portfolios`: Create or update a user's portfolio.
+
+### Tag Model
+*   `POST /api/tags`: Create a new tag.
+*   `GET /api/tags`: Get all tags.
+*   `GET /api/tags/:tagName/posts`: Get all posts for a tag.
