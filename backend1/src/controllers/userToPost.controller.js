@@ -88,54 +88,55 @@ export const likePost = async (req, res) => {
 
   try {
     const post = await Post.findById(postId).session(session);
-    if (!post) throw new Error("Post not found");
+    if (!post) {
+      await session.abortTransaction();
+      session.endSession();
+      return sendErrorResponse(res, 404, "Post not found");
+    }
 
-    const user = await User.findById(userId).session(session);
-    if (!user) throw new Error("User not found");
-
-    // Prevent duplicate likes
-    if (user.likedPosts.includes(postId)) throw new Error("Post already liked");
-
-    // Update both documents
-    user.likedPosts.push(postId);
-    await user.save({ session });
-
-    post.likes.push(userId);
-    post.likesCount += 1;
-    await post.save({ session });
-
-    // Create a new notification for the post author
-    const notification = new Notification({
-      recipient: post.user, // The author of the post
-      sender: userId, // The user who liked the post
-      type: "LIKE",
-      target: postId,
-      targetModel: "POST",
-    });
-
-    // Save the notification within the transaction
-    await notification.save({ session });
-
-    // Add the notification to the recipient's notifications and unreadNotifications arrays
-    await User.findByIdAndUpdate(
-      post.user,
-      {
-        $push: {
-          notifications: notification._id,
-          unreadNotifications: notification._id,
-        },
-      },
-      { session }
+    // Atomically update user and post
+    const userUpdate = User.findByIdAndUpdate(
+      userId,
+      { $addToSet: { likedPosts: postId } },
+      { new: true, session }
     );
 
-    // Commit the transaction
+    const postUpdate = Post.findByIdAndUpdate(
+      postId,
+      { $addToSet: { likes: userId }, $inc: { likesCount: 1 } },
+      { new: true, session }
+    );
+
+    const [updatedUser, updatedPost] = await Promise.all([userUpdate, postUpdate]);
+
+    if (!updatedUser || !updatedPost) {
+      throw new Error("Failed to update user or post");
+    }
+
+    // Only create a notification if the user liking the post is not the post's author
+    if (post.user.toString() !== userId.toString()) {
+      const notification = new Notification({
+        recipient: post.user,
+        sender: userId,
+        type: "LIKE",
+        target: postId,
+        targetModel: "POST",
+      });
+
+      await notification.save({ session });
+
+      await User.findByIdAndUpdate(
+        post.user,
+        { $push: { notifications: notification._id, unreadNotifications: notification._id } },
+        { session }
+      );
+
+      eventEmitter.emit("newPostLike", { notification, postAuthor: post.user._id });
+    }
+
     await session.commitTransaction();
     session.endSession();
 
-    // Emit a new event with only the necessary IDs
-    eventEmitter.emit("newPostLike", { postId: post._id, userId: user._id });
-
-    const updatedUser = await User.findById(userId);
     res.status(200).json(updatedUser);
   } catch (error) {
     await session.abortTransaction();
@@ -160,55 +161,47 @@ export const unlikePost = async (req, res) => {
   session.startTransaction();
 
   try {
-    const [post, user] = await Promise.all([
-      Post.findById(postId).session(session),
-      User.findById(userId).session(session),
-    ]);
-
+    const post = await Post.findById(postId).session(session);
     if (!post) {
       await session.abortTransaction();
       session.endSession();
       return sendErrorResponse(res, 404, "Post not found");
     }
-    if (!user) {
-      await session.abortTransaction();
-      session.endSession();
-      return sendErrorResponse(res, 404, "User not found");
+
+    // Atomically update user and post
+    const userUpdate = User.findByIdAndUpdate(
+      userId,
+      { $pull: { likedPosts: postId } },
+      { new: true, session }
+    );
+
+    const postUpdate = Post.findByIdAndUpdate(
+      postId,
+      { $pull: { likes: userId }, $inc: { likesCount: -1 } },
+      { new: true, session }
+    );
+
+    const [updatedUser, updatedPost] = await Promise.all([userUpdate, postUpdate]);
+
+    if (!updatedUser || !updatedPost) {
+      throw new Error("Failed to update user or post");
     }
-
-    // Ensure post is currently liked
-    if (!user.likedPosts.includes(postId)) {
-      await session.abortTransaction();
-      session.endSession();
-      return sendErrorResponse(res, 400, "Post not liked yet");
-    }
-
-    // Remove likes from both sides
-    user.likedPosts.pull(postId);
-    await user.save({ session });
-
-    post.likes.pull(userId);
-    post.likesCount = Math.max(0, post.likesCount - 1);
-    await post.save({ session });
 
     // Find and delete the corresponding notification
-    const deletedNotification = await Notification.findOneAndDelete({
-      recipient: post.user, // The author of the post received the like notification
-      sender: userId, // The user who unliked the post
-      type: "LIKE",
-      target: postId,
-    }).session(session);
+    const deletedNotification = await Notification.findOneAndDelete(
+      {
+        recipient: post.user,
+        sender: userId,
+        type: "LIKE",
+        target: postId,
+      },
+      { session }
+    );
 
-    // If a notification was found and deleted, remove its ID from the recipient's unreadNotifications and notifications arrays
     if (deletedNotification) {
       await User.findByIdAndUpdate(
         post.user,
-        {
-          $pull: {
-            unreadNotifications: deletedNotification._id,
-            notifications: deletedNotification._id,
-          },
-        },
+        { $pull: { notifications: deletedNotification._id, unreadNotifications: deletedNotification._id } },
         { session }
       );
     }
@@ -216,7 +209,6 @@ export const unlikePost = async (req, res) => {
     await session.commitTransaction();
     session.endSession();
 
-    const updatedUser = await User.findById(userId);
     res.status(200).json(updatedUser);
   } catch (error) {
     await session.abortTransaction();
@@ -260,40 +252,34 @@ export const createComment = async (req, res) => {
       { session }
     );
 
-    // Create a new notification for the post author
-    const notification = new Notification({
-      recipient: post.user, // The author of the post
-      sender: userId, // The user who comments the post
-      type: "COMMENT",
-      target: postId,
-      targetModel: "POST",
-    });
+    // Only create a notification if the user commenting is not the post's author
+    if (post.user.toString() !== userId.toString()) {
+      const notification = new Notification({
+        recipient: post.user, // The author of the post
+        sender: userId, // The user who comments the post
+        type: "COMMENT",
+        target: postId,
+        targetModel: "POST",
+      });
 
-    // Save the notification within the transaction
-    await notification.save({ session });
+      // Save the notification within the transaction
+      await notification.save({ session });
 
-    // Add the notification to the recipient's notifications and unreadNotifications arrays
-    await User.findByIdAndUpdate(
-      post.user,
-      {
-        $push: {
-          notifications: notification._id,
-          unreadNotifications: notification._id,
+      // Add the notification to the recipient's notifications and unreadNotifications arrays
+      await User.findByIdAndUpdate(
+        post.user,
+        {
+          $push: {
+            notifications: notification._id,
+            unreadNotifications: notification._id,
+          },
         },
-      },
-      { session }
-    );
+        { session }
+      );
 
-    // Update the post with the new comment
-    post.comments.push(comment[0]._id); // comment[0] because we passed an array to the comment.create function. It will return an Array
-    post.commentsCount += 1;
-    await post.save({ session });
-
-    await session.commitTransaction();
-    session.endSession();
-
-    // Emit a new event with only the necessary IDs
-    eventEmitter.emit("newComment", { notification, postAuthor: post.user });
+      // Emit a new event with only the necessary IDs
+      eventEmitter.emit("newComment", { notification, postAuthor: post.user });
+    }
 
     await comment[0].populate("user", "_id fullName profilePic");
 

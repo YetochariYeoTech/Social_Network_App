@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Notification from "../models/notification.model.js";
 import User from "../models/user.model.js";
 
@@ -189,31 +190,76 @@ export const deleteNotification = async (req, res) => {
 };
 
 /**
- * @desc Clear unread notifications for a user by category
+ * @desc Clear all unread notifications for a user
  * @route DELETE /api/notifications/cleanup
  * @access Private
  */
 export const cleanUpNotifications = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
   try {
-    const { key } = req.body;
     const userId = req.user._id;
 
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).session(session);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Check if the key exists in the map and clear the array
-    if (user.unreadNotifications.has(key)) {
-      user.unreadNotifications.set(key, []);
-      await user.save();
+    // Merge unread notifications into notifications
+    if (user.unreadNotifications.length > 0) {
+      user.notifications.unshift(...user.unreadNotifications);
+      user.unreadNotifications = [];
+      await user.save({ session });
     }
 
-    res
-      .status(200)
-      .json(`Unread notifications for '${key}' cleared`);
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).json({ message: "Unread notifications cleared successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    await session.abortTransaction();
+    session.endSession();
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+/**
+ * @desc Get unread notifications count by type
+ * @route POST /api/notifications/unread
+ * @access Private
+ */
+export const getUnreadNotifications = async (req, res) => {
+  try {
+    const { notificationIds } = req.body;
+    const notifications = await Notification.aggregate([
+      {
+        $match: {
+          _id: {
+            $in: notificationIds.map((id) => new mongoose.Types.ObjectId(id)),
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$type",
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          data: { $push: { k: "$_id", v: "$count" } },
+        },
+      },
+      {
+        $replaceRoot: { newRoot: { $arrayToObject: "$data" } },
+      },
+    ]);
+
+    res.status(200).json(notifications[0] || {});
+  } catch (error) {
+    console.error("Error in getUnreadNotifications:", error.message);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };

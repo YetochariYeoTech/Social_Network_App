@@ -63,8 +63,21 @@ eventEmitter.on("newComment", async ({ notification, postAuthor }) => {
     }
   } catch (error) {
     // If any error occurs, abort the transaction
-
     console.error("Error in newComment event listener:", error.message);
+  }
+});
+
+eventEmitter.on("newPostLike", async ({ notification, postAuthor }) => {
+  try {
+    // Get the receiver's socket ID
+    const receiverSocketId = getReceiverSocketId(postAuthor);
+
+    // If the receiver is connected, emit a 'newNotification' event
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newNotification", notification);
+    }
+  } catch (error) {
+    console.error("Error in newPostLike event listener:", error.message);
   }
 });
 

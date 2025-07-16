@@ -10,6 +10,7 @@ export const usePostStore = create((set, get) => ({
   loadingPosts: false,
   deletingPost: false,
   posts: [],
+  hasListener: false,
 
   resetPosts: () => set({ posts: [] }),
   // Get posts
@@ -20,7 +21,7 @@ export const usePostStore = create((set, get) => ({
       // Deduplicate posts by _id to prevent React key warnings
       const uniquePosts = [];
       const postIds = new Set();
-      res.data.forEach(post => {
+      res.data.forEach((post) => {
         if (!postIds.has(post._id)) {
           uniquePosts.push(post);
           postIds.add(post._id);
