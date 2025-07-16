@@ -27,15 +27,21 @@ function NotificationsBadge() {
   const commentNotifications = unreadCounts.COMMENT || 0;
 
   const likes = ["User1 liked your post", "User2 liked your post"];
-  const comments = ["User3 commented on your post", "User4 commented on your post"];
-  const followers = ["User5 started following you", "User6 started following you"];
+  const comments = [
+    "User3 commented on your post",
+    "User4 commented on your post",
+  ];
+  const followers = [
+    "User5 started following you",
+    "User6 started following you",
+  ];
 
   return (
     <div className="flex flex-col bg-base-200 pl-1 pt-1 pb-1 shadow-md rounded-lg">
       <span className="font-bold mb-2">Notifications Center</span>
       <div className="flex justify-around">
         <button
-          className="flex items-center tooltip tooltip-bottom"
+          className="flex items-center tooltip tooltip-bottom hover:scale-105 transition-transform duration-100"
           data-tip="Likes"
           onClick={() => setLikesModalOpen(true)}
         >
@@ -43,7 +49,7 @@ function NotificationsBadge() {
           <span className={styles.countersStyles}>{likeNotifications}</span>
         </button>
         <button
-          className="flex items-center tooltip tooltip-bottom"
+          className="flex items-center tooltip tooltip-bottom hover:scale-105 transition-transform duration-100"
           data-tip="Followers"
           onClick={() => setFollowersModalOpen(true)}
         >
@@ -51,7 +57,7 @@ function NotificationsBadge() {
           <span className={styles.countersStyles}>140</span>
         </button>
         <button
-          className="flex items-center tooltip tooltip-bottom"
+          className="flex items-center tooltip tooltip-bottom hover:scale-105 transition-transform duration-100"
           data-tip="Comments"
           onClick={() => setCommentsModalOpen(true)}
         >
@@ -59,19 +65,37 @@ function NotificationsBadge() {
           <span className={styles.countersStyles}>{commentNotifications}</span>
         </button>
       </div>
-      <NotificationModal title="Likes" isOpen={likesModalOpen} onClose={() => setLikesModalOpen(false)}>
+      <NotificationModal
+        title="Likes"
+        isOpen={likesModalOpen}
+        onClose={() => setLikesModalOpen(false)}
+      >
         <ul>
-          {likes.map((like, index) => <li key={index}>{like}</li>)}
+          {likes.map((like, index) => (
+            <li key={index}>{like}</li>
+          ))}
         </ul>
       </NotificationModal>
-      <NotificationModal title="Comments" isOpen={commentsModalOpen} onClose={() => setCommentsModalOpen(false)}>
+      <NotificationModal
+        title="Comments"
+        isOpen={commentsModalOpen}
+        onClose={() => setCommentsModalOpen(false)}
+      >
         <ul>
-          {comments.map((comment, index) => <li key={index}>{comment}</li>)}
+          {comments.map((comment, index) => (
+            <li key={index}>{comment}</li>
+          ))}
         </ul>
       </NotificationModal>
-      <NotificationModal title="Followers" isOpen={followersModalOpen} onClose={() => setFollowersModalOpen(false)}>
+      <NotificationModal
+        title="Followers"
+        isOpen={followersModalOpen}
+        onClose={() => setFollowersModalOpen(false)}
+      >
         <ul>
-          {followers.map((follower, index) => <li key={index}>{follower}</li>)}
+          {followers.map((follower, index) => (
+            <li key={index}>{follower}</li>
+          ))}
         </ul>
       </NotificationModal>
     </div>

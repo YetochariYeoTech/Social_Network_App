@@ -10,7 +10,7 @@ import { usePostStore } from "../../store/usePostStore";
 // Animated UI components
 import TiltedCard from "../animatedUI/TiltedCard";
 import CommentSection from "./CommentSection";
-import { Button, Menu, Portal } from "@chakra-ui/react";
+import { Menu, Portal } from "@chakra-ui/react";
 import { useShallow } from "zustand/shallow";
 import { useCommentStore } from "../../store/useCommentStore";
 
@@ -47,7 +47,7 @@ function Post({ post }) {
                 </p>
               </span>
             </div>
-            <ActionModal postId={post.postId} />
+            <ActionModal postId={post.postId} creatorId={post.user._id} />
           </div>
           <p>{post.description && post.description}</p>
           <div className="">
@@ -203,7 +203,10 @@ function PostFooter({ postId, likesCount, commentsCount }) {
   );
 }
 
-function ActionModal({ postId = null }) {
+function ActionModal({ postId = null, creatorId = null }) {
+  const { authUser } = useAuthStore(
+    useShallow((state) => ({ authUser: state.authUser }))
+  );
   return (
     <Menu.Root>
       <Menu.Trigger asChild>
@@ -214,7 +217,9 @@ function ActionModal({ postId = null }) {
           <Menu.Content>
             <Menu.Item value="new-txt-a">Repost</Menu.Item>
             <Menu.Item value="new-file-a">Report</Menu.Item>
-            <Menu.Item value="new-win-a">Delete</Menu.Item>
+            {authUser._id === creatorId && (
+              <Menu.Item value="new-win-a">Delete</Menu.Item>
+            )}
             {/* <Menu.Item value="open-file-a">Open File...</Menu.Item> */}
           </Menu.Content>
         </Menu.Positioner>
