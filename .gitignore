@@ -23,5 +23,5 @@ dist-ssr
 *.sln
 *.sw?
 start-geminiCLI.bat
-
+*.txt
 .env
