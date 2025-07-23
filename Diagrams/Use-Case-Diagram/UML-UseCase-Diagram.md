@@ -1,54 +1,46 @@
-# Description du Diagramme de Cas d'Utilisation
+# Diagramme de Cas d'Utilisation
 
-Ce document décrit les différentes interactions possibles entre les acteurs (Utilisateur, Administrateur) et le système de messagerie sociale. Il est structuré en paquets fonctionnels pour clarifier les responsabilités et les fonctionnalités.
+Ce document présente les cas d'utilisation pour le système de messagerie sociale, décrivant les interactions entre les acteurs (Utilisateur, Administrateur) et le système.
 
-## Acteurs
+## Description des Cas d'Utilisation
 
-1.  **Utilisateur** : Le participant principal du réseau social. Il peut créer du contenu, interagir avec d'autres utilisateurs et gérer son propre compte.
-2.  **Administrateur** : Un utilisateur avec des privilèges élevés, responsable de la modération du contenu et de la gestion de la plateforme.
+### Acteurs
 
-## Paquets de Cas d'Utilisation
+- **Utilisateur**: Un membre standard de la plateforme.
+- **Administrateur**: Un utilisateur avec des privilèges élevés pour la gestion et la modération de la plateforme.
 
-### Accès Public
+### Cas d'Utilisation
 
-*   **S'inscrire / Se connecter** : Permet à un visiteur de créer un nouveau compte ou de se connecter à un compte existant. C'est le point d'entrée pour tous les utilisateurs.
+#### Accès Public
 
-### Gestion du Compte
+- **S'inscrire / Se connecter**: Permet à un visiteur de créer un compte ou de se connecter.
 
-*   **Gérer son profil** : Permet à un utilisateur de modifier ses informations personnelles (nom, photo de profil, biographie, etc.).
-*   **Gérer son portfolio** : Permet à un utilisateur de mettre en valeur ses projets ou réalisations.
+#### Gestion du Compte
 
-### Gestion de Contenu
+- **Gérer son profil**: Permet à un utilisateur de mettre à jour ses informations personnelles.
+- **Gérer son portfolio**: Permet à un utilisateur de gérer son portfolio professionnel.
 
-*   **Créer et gérer un post** : L'utilisateur peut publier du contenu (texte, images), le modifier ou le supprimer.
-*   **Commenter un post** : L'utilisateur peut ajouter des commentaires sur les posts des autres.
-*   **Tagger un post** : Permet de catégoriser le contenu avec des mots-clés pour en faciliter la découverte.
-*   **Recevoir des notifications** : Le système informe l'utilisateur des interactions pertinentes (nouveaux commentaires, likes, etc.).
+#### Gestion de Contenu
 
-### Signalement et Modération
+- **Créer et gérer un post**: Permet à un utilisateur de publier, modifier ou supprimer ses propres posts.
+- **Commenter un post**: Permet à un utilisateur de commenter les posts.
+- **Tagger un post**: Permet à un utilisateur d'ajouter des tags à un post.
+- **Recevoir des notifications**: L'utilisateur reçoit des notifications pour les interactions pertinentes.
 
-Ce paquet gère le cycle de vie du contenu problématique.
+#### Interactions Sociales
 
-*   **Signaler un contenu** : Un utilisateur peut marquer un post ou un commentaire comme étant inapproprié.
-*   **Gérer le contenu signalé** : Un administrateur examine les contenus signalés. Ce cas d'utilisation est étendu par les actions suivantes :
-    *   **Supprimer un contenu (`<<extend>>`)** : Si le contenu enfreint les règles, l'administrateur le supprime.
-    *   **Ignorer le signalement (`<<extend>>`)** : Si le contenu est jugé approprié, l'administrateur rejette le signalement.
+- **Envoyer un message privé**: Permet aux utilisateurs de communiquer en privé.
+- **Suivre un utilisateur**: Permet à un utilisateur de suivre les activités d'un autre.
+- **Créer/Rejoindre un groupe**: Permet aux utilisateurs de former des communautés.
 
-### Interactions Sociales
+#### Signalement et Modération
 
-*   **Envoyer un message privé** : Communication directe et privée entre utilisateurs.
-*   **Suivre un utilisateur** : Permet de s'abonner aux publications d'un autre utilisateur.
-*   **Créer/Rejoindre un groupe** : Fonctionnalité de discussion en communauté autour d'un intérêt commun.
+- **Signaler un contenu**: Permet à un utilisateur de signaler un contenu qu'il juge inapproprié.
+- **Gérer les signalements**: Permet à un administrateur de voir et de traiter les contenus signalés.
+- **Supprimer un contenu inapproprié**: (Extension) L'administrateur peut supprimer un contenu suite à un signalement.
+- **Bloquer un utilisateur**: (Extension) L'administrateur peut bloquer un utilisateur suite à un signalement ou un comportement abusif.
 
-### Administration
+#### Administration
 
-Ce paquet regroupe les tâches de gestion de la plateforme réservées à l'administrateur.
-
-*   **Gérer les comptes utilisateurs** : L'administrateur peut superviser les comptes des utilisateurs. Ce cas est étendu par :
-    *   **Bloquer un utilisateur (`<<extend>>`)** : Empêche définitivement un utilisateur d'accéder à la plateforme.
-    *   **Suspendre un utilisateur (`<<extend>>`)** : Bloque temporairement l'accès d'un utilisateur.
-*   **Consulter les statistiques** : Permet à l'administrateur de visualiser des données sur l'activité de la plateforme.
-
-### Note sur l'Authentification
-
-À l'exception de "S'inscrire / Se connecter", toutes les actions nécessitent que l'utilisateur soit authentifié. Le cas d'utilisation **S'authentifier** est donc implicitement inclus dans tous les autres cas d'utilisation restreints.
+- **Gérer les comptes utilisateurs**: Permet à un administrateur de gérer les comptes des utilisateurs (activer, désactiver, etc.).
+- **Consulter les statistiques**: Permet à un administrateur de visualiser les statistiques d'utilisation de la plateforme.

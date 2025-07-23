@@ -1,217 +1,101 @@
-# Fullstack Chat Application
+# Projet de Messagerie Sociale Fullstack
 
-This is a fullstack chat application built with Node.js (Express), MongoDB, and React. It includes features for user authentication, real-time messaging, and social media-like functionalities such as posts, likes, and comments.
+## 1. Vue d'ensemble
 
-## Features
+Ce projet est une application web complète de messagerie sociale conçue pour offrir une expérience utilisateur riche et interactive. Elle combine les fonctionnalités d'une plateforme de médias sociaux (posts, commentaires, suivis) avec une messagerie instantanée en temps réel. L'objectif est de créer un système robuste, scalable et sécurisé, capable de gérer des interactions complexes et des communications en direct.
 
-- User Authentication (Signup, Login, Logout)
-- Real-time Chat (using Socket.IO)
-- User Profiles
-- Posts (with attachments)
-- Liking and Commenting on Posts
-- Notifications
-- Account Lockout (for brute-force protection)
+La conception du projet repose sur une séparation claire des responsabilités entre le frontend, le backend et la base de données, orchestrée par une architecture modulaire et résiliente.
 
-## Technologies Used
+## 2. Justification par les Diagrammes UML
 
-### Backend (backend1)
-- **Node.js**: JavaScript runtime
-- **Express.js**: Web application framework
-- **MongoDB**: NoSQL database
-- **Mongoose**: MongoDB object modeling for Node.js
-- **Socket.IO**: Real-time bidirectional event-based communication
-- **bcryptjs**: For password hashing
-- **jsonwebtoken**: For JWT authentication
-- **cloudinary**: For image and file uploads
-- **express-validator**: For input validation
-- **express-rate-limit**: For API rate limiting
-- **dotenv**: For environment variable management
+Les diagrammes UML sont au cœur de la conception de ce projet. Ils ne sont pas de simples illustrations, mais des plans qui définissent la structure, le comportement et les interactions au sein du système.
 
-### Frontend (frontend)
-- **React**: JavaScript library for building user interfaces
-- **Vite**: Next-generation frontend tooling
-- **Tailwind CSS**: Utility-first CSS framework
-- **Axios**: Promise-based HTTP client
-- **Zustand**: Small, fast, and scalable bearbones state-management solution
+### 2.1. Diagramme de Cas d'Utilisation : Définir le "Quoi ?"
 
-### Other
-- **Nginx**: (Configured in the `NGINX` directory) Used as a reverse proxy.
+Le [diagramme de cas d'utilisation](./Diagrams/Use-Case-Diagram/UML-UseCase-Diagram.md) définit les fonctionnalités du point de vue des acteurs : l'**Utilisateur** et l'**Administrateur**. Il répond à la question : **"Que peut-on faire avec le système ?"**
 
-## Setup and Installation
+Ce diagramme a été crucial pour délimiter le périmètre fonctionnel de l'application avant même d'écrire une seule ligne de code.
 
-To get this project up and running on your local machine, follow these steps:
+### 2.2. Diagramme d'Architecture : Définir le "Comment ?"
 
-### 1. Clone the Repository
+Le [diagramme d'architecture](./Diagrams/Architecture-Diagram/Architecture-Generale.md) répond à la question : **"Comment le système est-il construit pour réaliser ces fonctionnalités ?"**
 
-```bash
-git clone <repository-url>
-cd fullstack-chat-app
-```
+Il expose une architecture multi-tiers conçue pour la performance et la résilience, incluant un **MongoDB Replica Set** pour garantir la haute disponibilité et la durabilité des données.
 
-### 2. Backend Setup (backend1)
+Ensemble, ces deux diagrammes fournissent une vision complète et cohérente du projet, du besoin fonctionnel à la solution technique implémentée.
 
-Navigate to the `backend1` directory:
+## 3. Technologies Utilisées
 
-```bash
-cd backend1
-```
+-   **Backend**: Node.js, Express.js, Socket.IO
+-   **Frontend**: React, Vite, Tailwind CSS
+-   **Base de Données**: MongoDB (configurée en Replica Set)
+-   **Reverse Proxy**: NGINX
+-   **Authentification**: JSON Web Tokens (JWT)
 
-Install dependencies:
+## 4. Endpoints de l'API
 
-```bash
-npm install
-```
-
-Create a `.env` file in the `backend1` directory and add your environment variables. Here's an example:
-
-```
-PORT=5000
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret
-CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
-CLOUDINARY_API_KEY=your_cloudinary_api_key
-CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-CLIENT_ORIGIN=http://localhost:5173
-```
-
-**Note on MongoDB**: Ensure you have a MongoDB instance running. You can use a local installation or a cloud service like MongoDB Atlas.
-
-### 3. Frontend Setup (frontend)
-
-Navigate to the `frontend` directory:
-
-```bash
-cd ../frontend
-```
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-### 4. Nginx Setup (Optional)
-
-If you plan to use Nginx as a reverse proxy, navigate to the `NGINX` directory and configure `nginx.conf` as needed. This setup is typically for production environments.
-
-## Running the Application
-
-### 1. Start the Backend
-
-Navigate to the `backend1` directory and run:
-
-```bash
-npm start
-# Or for development with hot-reloading:
-npm run dev
-```
-
-This will start the backend server, typically on `http://localhost:5000` (or your specified `PORT`).
-
-### 2. Start the Frontend
-
-Navigate to the `frontend` directory and run:
-
-```bash
-npm run dev
-```
-
-This will start the frontend development server, typically on `http://localhost:5173`.
-
-### 3. Access the Application
-
-Open your web browser and go to `http://localhost:5173` to access the application.
-
-## Testing
-
-Unit tests for the backend are located in the `backend1/test` directory.
-
-To run the tests, navigate to the `backend1` directory and execute:
-
-```bash
-npm test
-```
-
-**Note on Testing Environment**: You might encounter an `ERR_INTERNAL_ASSERTION` error when running tests. This is a known issue related to how Mocha handles ES modules in certain Node.js environments and complex module interdependencies. While this prevents automated unit testing in the current setup, the backend functionality has been thoroughly reviewed and can be verified through:
-
-*   **Manual API Testing**: Use tools like Postman or Insomnia to send requests to the backend API endpoints.
-*   **Frontend Integration**: Run the frontend application and interact with the features to ensure the backend is responding as expected.
-
-## API Endpoints (Backend)
-
-Here's a brief overview of the main API endpoint categories:
-
--   `/api/auth`: User authentication (signup, login, logout, checkAuth, updateProfile)
--   `/api/messages`: Real-time messaging functionalities
--   `/api/posts`: Post creation, retrieval, and deletion
--   `/api/notifications`: Notification management
--   `/api/posts/actions`: Liking, favoriting, commenting on posts
-
-Refer to the respective route and controller files in `backend1/src/routes` and `backend1/src/controllers` for detailed endpoint specifications and request/response formats.
-
-## API Routes by Model
+Voici la liste détaillée des routes de l'API, organisées par modèle de données.
 
 ### User Model
-*   `POST /api/auth/signup`: Create a new user.
-*   `POST /api/auth/login`: Login a user.
-*   `POST /api/auth/logout`: Logout a user.
-*   `PUT /api/auth/update-profile`: Update a user's profile.
-*   `GET /api/auth/check`: Check if a user is authenticated.
-*   `GET /api/messages/users`: Get all users for the sidebar.
+*   `POST /api/auth/signup`: Créer un nouvel utilisateur.
+*   `POST /api/auth/login`: Connecter un utilisateur.
+*   `POST /api/auth/logout`: Déconnecter un utilisateur.
+*   `PUT /api/auth/update-profile`: Mettre à jour le profil d'un utilisateur.
+*   `GET /api/auth/check`: Vérifier si un utilisateur est authentifié.
+*   `GET /api/messages/users`: Obtenir tous les utilisateurs pour la barre latérale de messagerie.
 
 ### Post Model
-*   `POST /api/posts/createPost`: Create a new post.
-*   `GET /api/posts`: Get all posts.
-*   `DELETE /api/posts/deletePost/:postId`: Delete a post.
-*   `POST /api/posts/actions/favorites/:postId`: Add a post to favorites.
-*   `DELETE /api/posts/actions/favorites/:postId`: Remove a post from favorites.
-*   `POST /api/posts/actions/likes/:postId`: Like a post.
-*   `DELETE /api/posts/actions/likes/:postId`: Unlike a post.
+*   `POST /api/posts/createPost`: Créer un nouveau post.
+*   `GET /api/posts`: Obtenir tous les posts.
+*   `DELETE /api/posts/deletePost/:postId`: Supprimer un post.
+*   `POST /api/posts/actions/favorites/:postId`: Ajouter un post aux favoris.
+*   `DELETE /api/posts/actions/favorites/:postId`: Retirer un post des favoris.
+*   `POST /api/posts/actions/likes/:postId`: Aimer un post.
+*   `DELETE /api/posts/actions/likes/:postId`: Ne plus aimer un post.
 
 ### Comment Model
-*   `POST /api/posts/actions/:postId/comments`: Create a new comment.
-*   `GET /api/posts/actions/:postId/comments`: Get all comments for a post.
-*   `DELETE /api/posts/actions/comments/:commentId`: Delete a comment.
+*   `POST /api/posts/actions/:postId/comments`: Créer un nouveau commentaire.
+*   `GET /api/posts/actions/:postId/comments`: Obtenir tous les commentaires d'un post.
+*   `DELETE /api/posts/actions/comments/:commentId`: Supprimer un commentaire.
 
 ### Message Model
-*   `GET /api/messages/:id`: Get all messages for a conversation.
-*   `POST /api/messages/send/:id`: Send a message.
+*   `GET /api/messages/:id`: Obtenir tous les messages d'une conversation.
+*   `POST /api/messages/send/:id`: Envoyer un message.
 
 ### Notification Model
-*   `GET /api/notifications`: Get all notifications for a user.
-*   `POST /api/notifications`: Create a notification.
-*   `PUT /api/notifications/:notificationId/read`: Mark a notification as read.
-*   `DELETE /api/notifications/:notificationId`: Delete a notification.
-*   `DELETE /api/notifications/cleanup`: Clear unread notifications for a user by category.
+*   `GET /api/notifications`: Obtenir toutes les notifications d'un utilisateur.
+*   `POST /api/notifications`: Créer une notification.
+*   `PUT /api/notifications/:notificationId/read`: Marquer une notification comme lue.
+*   `DELETE /api/notifications/:notificationId`: Supprimer une notification.
 
 ### Event Model
-*   `POST /api/events`: Create a new event.
-*   `GET /api/events`: Get all events.
-*   `GET /api/events/:eventId`: Get a single event by ID.
-*   `PUT /api/events/:eventId`: Update an event.
-*   `DELETE /api/events/:eventId`: Delete an event.
-*   `POST /api/events/:eventId/rsvp`: RSVP to an event.
+*   `POST /api/events`: Créer un nouvel événement.
+*   `GET /api/events`: Obtenir tous les événements.
+*   `GET /api/events/:eventId`: Obtenir un événement par son ID.
+*   `PUT /api/events/:eventId`: Mettre à jour un événement.
+*   `DELETE /api/events/:eventId`: Supprimer un événement.
+*   `POST /api/events/:eventId/rsvp`: S'inscrire à un événement.
 
 ### Follow Model
-*   `POST /api/follows`: Follow a user.
-*   `DELETE /api/follows/:followingId`: Unfollow a user.
-*   `GET /api/follows/:userId/followers`: Get a user's followers.
-*   `GET /api/follows/:userId/following`: Get a user's following.
+*   `POST /api/follows`: Suivre un utilisateur.
+*   `DELETE /api/follows/:followingId`: Ne plus suivre un utilisateur.
+*   `GET /api/follows/:userId/followers`: Obtenir les abonnés d'un utilisateur.
+*   `GET /api/follows/:userId/following`: Obtenir les abonnements d'un utilisateur.
 
 ### Group Model
-*   `POST /api/groups`: Create a new group.
-*   `GET /api/groups`: Get all groups.
-*   `GET /api/groups/:groupId`: Get a single group by ID.
-*   `PUT /api/groups/:groupId`: Update a group.
-*   `DELETE /api/groups/:groupId`: Delete a group.
-*   `POST /api/groups/:groupId/members`: Add a member to a group.
-*   `DELETE /api/groups/:groupId/members/:memberId`: Remove a member from a group.
+*   `POST /api/groups`: Créer un nouveau groupe.
+*   `GET /api/groups`: Obtenir tous les groupes.
+*   `GET /api/groups/:groupId`: Obtenir un groupe par son ID.
+*   `PUT /api/groups/:groupId`: Mettre à jour un groupe.
+*   `DELETE /api/groups/:groupId`: Supprimer un groupe.
+*   `POST /api/groups/:groupId/members`: Ajouter un membre à un groupe.
+*   `DELETE /api/groups/:groupId/members/:memberId`: Retirer un membre d'un groupe.
 
 ### Portfolio Model
-*   `GET /api/portfolios/:userId`: Get a user's portfolio.
-*   `PUT /api/portfolios`: Create or update a user's portfolio.
+*   `GET /api/portfolios/:userId`: Obtenir le portfolio d'un utilisateur.
+*   `PUT /api/portfolios`: Créer ou mettre à jour le portfolio d'un utilisateur.
 
 ### Tag Model
-*   `POST /api/tags`: Create a new tag.
-*   `GET /api/tags`: Get all tags.
-*   `GET /api/tags/:tagName/posts`: Get all posts for a tag.
+*   `POST /api/tags`: Créer un nouveau tag.
+*   `GET /api/tags`: Obtenir tous les tags.
+*   `GET /api/tags/:tagName/posts`: Obtenir tous les posts pour un tag donné.
