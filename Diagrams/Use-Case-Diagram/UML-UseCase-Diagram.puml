@@ -24,28 +24,34 @@ rectangle "Système de Messagerie Sociale" {
     usecase "Recevoir des notifications" as UC11
   }
 
+  package "Signalement et Modération" {
+    usecase "Signaler un contenu" as UC14
+    usecase "Gérer le contenu signalé" as UC15
+    usecase "Supprimer un contenu" as UC18
+    usecase "Ignorer le signalement" as UC20
+  }
+
   package "Interactions Sociales" {
     usecase "Envoyer un message privé" as UC7
     usecase "Suivre un utilisateur" as UC8
     usecase "Créer/Rejoindre un groupe" as UC9
   }
 
-  package "Fonctionnalités Futures" {
-    usecase "Passer un appel vidéo/vocal" as UC10
-    usecase "Publier une Story éphémère" as UC12
-    usecase "Signaler un contenu" as UC14
-  }
-
-  package "Administration (Futur)" {
-    usecase "Gérer le contenu signalé" as UC15
+  package "Administration" {
     usecase "Gérer les comptes utilisateurs" as UC16
+    usecase "Bloquer un utilisateur" as UC19
+    usecase "Suspendre un utilisateur" as UC21
     usecase "Consulter les statistiques" as UC17
   }
 
-  note "Tous les cas d'utilisation, à l'exception de ceux dans le paquet 'Accès Public', incluent le cas 'S\'authentifier'." as AuthNote
+  note "Tous les cas d'utilisation, à l'exception de ceux dans le paquet 'Accès Public', incluent le cas 'S'authentifier'." as AuthNote
   AuthNote . UC_Auth
 }
 
+' Lien invisible pour forcer la disposition
+UC11 -[hidden]d-> UC14
+
+' Cas d'utilisation pour l'Utilisateur
 Utilisateur --> UC1
 Utilisateur --> UC2
 Utilisateur --> UC3
@@ -55,13 +61,21 @@ Utilisateur --> UC6
 Utilisateur --> UC7
 Utilisateur --> UC8
 Utilisateur --> UC9
-Utilisateur --> UC10
 Utilisateur --> UC11
-Utilisateur --> UC12
 Utilisateur --> UC14
 
+' Cas d'utilisation pour l'Administrateur
 Administrateur --> UC15
 Administrateur --> UC16
 Administrateur --> UC17
 
+' Extensions pour la gestion de contenu signalé
+UC18 <.. UC15 : <<extend>>
+UC20 <.. UC15 : <<extend>>
+
+' Extensions pour la gestion des comptes utilisateurs
+UC19 <.. UC16 : <<extend>>
+UC21 <.. UC16 : <<extend>>
+
 @enduml
+

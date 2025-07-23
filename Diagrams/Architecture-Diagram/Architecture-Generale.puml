@@ -8,15 +8,18 @@ node "Client (Navigateur)" {
 }
 
 node "Serveur" {
-  component "NGINX" as nginx
+  component "NGINX (Reverse Proxy)" as nginx
 
   node "Services Applicatifs" {
+    component "Module d'Authentification (JWT)" as auth
     component "Backend API (Node.js)" as backend
     component "Serveur Temps Réel (Socket.IO)" as realtime
   }
 
-  database "Base de Données" {
-    component "MongoDB" as db
+  database "Base de Données (MongoDB Replica Set)" {
+    node "MongoDB (Primaire)" as db_primary
+    node "MongoDB (Replica 1)" as db_replica1
+    node "MongoDB (Replica 2)" as db_replica2
   }
 }
 
@@ -25,12 +28,27 @@ user --> frontend : "1. Interagit avec l'UI"
 
 frontend --> nginx : "2. Requêtes API (HTTPS)\n3. Connexion (WebSocket)"
 
-nginx --> backend : "2a. Proxy des requêtes API"
+' Authentification
+nginx --> auth : "2a. Proxy vers le module d'authentification"
+auth --> backend : "2b. Requête authentifiée transmise à l'API"
+
+' Connexion temps réel
 nginx --> realtime : "3a. Proxy de la connexion WebSocket"
 
-backend --> db : "4. Lecture/Écriture des données"
+' --- Flux de données (Base de données) ---
+' Le backend écrit toujours sur le nœud primaire
+backend --> db_primary : "4. Écritures (INSERT, UPDATE)"
 
-' Le backend notifie le serveur temps réel lorsqu'un événement se produit
+' La réplication est gérée automatiquement par MongoDB
+db_primary .> db_replica1 : "Réplication"
+db_primary .> db_replica2 : "Réplication"
+
+' Le backend peut lire depuis les replicas pour la scalabilité
+backend --> db_replica1 : "4a. Lectures (optionnel)"
+backend --> db_replica2 : "4b. Lectures (optionnel)"
+
+' --- Flux d'événements temps réel ---
+' Le backend notifie le serveur temps réel après une écriture réussie
 backend ..> realtime : "5. Émet un événement (ex: 'nouveau_message')"
 
 ' Le serveur temps réel pousse les mises à jour aux clients connectés
