@@ -1,0 +1,40 @@
+@startuml
+title Envoi d'un Message
+
+actor Utilisateur
+participant Frontend
+participant NGINX
+participant Backend
+database "Base de données" as Database
+
+Utilisateur -> Frontend: Envoie un message
+activate Frontend
+
+Frontend -> NGINX: POST /api/messages/send/{id} (avec cookie JWT)
+activate NGINX
+
+NGINX -> Backend: transmet la requête
+activate Backend
+
+Backend -> Backend: Middleware "protectRoute"
+alt Token valide
+    Backend -> Database: Sauvegarde le message
+    activate Database
+    Database --> Backend: Succès
+    deactivate Database
+
+    Backend --> NGINX: 201 Créé
+    NGINX --> Frontend: 201 Créé
+
+    Frontend -> Utilisateur: Met à jour l'interface
+else Token invalide
+    Backend --> NGINX: 401 Non autorisé
+    NGINX --> Frontend: 401 Non autorisé
+    Frontend -> Utilisateur: Affiche une erreur d'authentification
+end
+
+deactivate Backend
+deactivate NGINX
+deactivate Frontend
+
+@enduml

@@ -1,0 +1,40 @@
+@startuml
+title Suivre un Utilisateur
+
+actor "Utilisateur Actif" as UserA
+participant Frontend
+participant NGINX
+participant Backend
+database "Base de données" as Database
+
+UserA -> Frontend: Clique sur "Suivre"
+activate Frontend
+
+Frontend -> NGINX: POST /api/follows (avec cookie JWT)
+activate NGINX
+
+NGINX -> Backend: transmet la requête
+activate Backend
+
+Backend -> Backend: Middleware "protectRoute"
+alt Token valide
+    Backend -> Database: Sauvegarde la relation
+    activate Database
+    Database --> Backend: Succès
+    deactivate Database
+
+    Backend --> NGINX: 201 Créé
+    NGINX --> Frontend: 201 Créé
+
+    Frontend -> UserA: Met à jour l'interface
+else Token invalide
+    Backend --> NGINX: 401 Non autorisé
+    NGINX --> Frontend: 401 Non autorisé
+    Frontend -> UserA: Affiche une erreur d'authentification
+end
+
+deactivate Backend
+deactivate NGINX
+deactivate Frontend
+
+@enduml

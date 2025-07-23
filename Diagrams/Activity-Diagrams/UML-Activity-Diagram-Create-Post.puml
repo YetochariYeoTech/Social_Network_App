@@ -1,0 +1,57 @@
+@startuml
+title Diagramme d'activité pour la création d'une publication
+
+skinparam titleFontSize 22
+
+skinparam defaultFontSize 16
+skinparam defaultFontStyle bold
+
+|Utilisateur|
+start
+:Crée le contenu d'une publication;
+:Clique sur "Publier";
+
+|Frontend (Client)|
+:Envoie une requête API (POST /posts) avec le contenu;
+
+|Backend (API)|
+:Authentifie l'utilisateur via middleware;
+if (Authentification réussie ?) then (oui)
+  :Valide le contenu de la publication;
+  :Sauvegarde la publication en base de données;
+  fork
+    :Renvoie une réponse de succès (201) au client;
+  fork again
+    :Émet un événement ("POST_CREATED") pour les notifications;
+  end fork
+else (non)
+  :Renvoie une erreur (401 Unauthorized);
+  stop
+endif
+
+|Frontend (Client)|
+:Reçoit la réponse de succès;
+:Met à jour l'interface pour afficher la nouvelle publication;
+
+|Serveur Temps Réel|
+:Capture l'événement "POST_CREATED";
+:Pousse une notification aux abonnés (followers);
+stop
+
+'-------------------------------------------------------------------------------
+' LOGIQUE DU DIAGRAMME
+'-------------------------------------------------------------------------------
+' Ce diagramme illustre la création d'une publication, une autre
+' fonctionnalité centrale de l'application.
+'
+' 1. Pré-requis:
+'    - Le flux suppose que l'utilisateur est déjà connecté. La première étape
+'      côté backend est donc de vérifier l'authenticité de la requête.
+'
+' 2. Similitudes avec l'envoi de message:
+'    - Le flux est architecturalement similaire à l'envoi d'un message :
+'      une requête, une sauvegarde en base de données, une réponse directe
+'      et un événement parallèle pour les actions asynchrones (notifications).
+'      Ceci suggère un design pattern cohérent dans l'application.
+'-------------------------------------------------------------------------------
+@enduml

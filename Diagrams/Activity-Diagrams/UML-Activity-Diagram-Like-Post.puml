@@ -1,0 +1,50 @@
+@startuml
+title Diagramme d'activité pour aimer une publication
+
+skinparam titleFontSize 22
+skinparam defaultFontSize 18
+skinparam defaultFontStyle bold
+
+|Utilisateur|
+start
+:Clique sur le bouton "J'aime" sur une publication;
+
+|Frontend (Client)|
+:Envoie une requête API (ex: POST /posts/{id}/like);
+
+|Backend (API)|
+:Authentifie l'utilisateur et valide la requête;
+if (Opération valide ?) then (oui)
+  :Ajoute le "J'aime" à la publication en base de données;
+  fork
+    :Renvoie une réponse de succès au client;
+  fork again
+    :Émet un événement ("POST_LIKED");
+  end fork
+else (non)
+  :Renvoie une erreur (ex: 401, 404);
+  stop
+endif
+
+|Frontend (Client)|
+:Met à jour l'interface (compteur de "J'aime", bouton);
+
+|Serveur Temps Réel|
+:Notifie l'auteur de la publication via WebSocket;
+stop
+
+'-------------------------------------------------------------------------------
+' LOGIQUE DU DIAGRAMME (Simplifié)
+'-------------------------------------------------------------------------------
+' Ce diagramme illustre le processus d'aimer une publication, une interaction
+' courante dans les applications sociales.
+'
+' 1. Interaction Atomique:
+'    - L'action est simple et directe : un clic met à jour un état.
+'
+' 2. Flux de Données:
+'    - Le backend met à jour l'état de la publication (qui l'a aimée).
+'    - Le frontend met à jour l'interface pour refléter ce nouvel état.
+'    - Le serveur temps réel notifie l'auteur, fermant la boucle de l'interaction sociale.
+'-------------------------------------------------------------------------------
+@enduml

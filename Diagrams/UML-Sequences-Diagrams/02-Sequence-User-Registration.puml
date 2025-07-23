@@ -1,0 +1,48 @@
+@startuml
+title Inscription d'un Utilisateur
+
+actor Utilisateur
+participant Frontend
+participant NGINX
+participant Backend
+database "Base de données" as Database
+
+Utilisateur -> Frontend: Soumet le formulaire d'inscription
+activate Frontend
+
+Frontend -> NGINX: POST /api/auth/register
+activate NGINX
+NGINX -> Backend: transmet la requête
+activate Backend
+
+Backend -> Database: Trouver l'utilisateur avec l'email
+activate Database
+Database --> Backend: Résultat
+deactivate Database
+
+alt L'utilisateur n'existe pas
+    note left: Le backend hache le mot de passe
+    Backend -> Database: Sauvegarde le nouvel utilisateur
+    activate Database
+    Database --> Backend: Succès
+    deactivate Database
+
+    Backend --> NGINX: 201 Créé
+    NGINX --> Frontend: 201 Créé
+    deactivate Backend
+    deactivate NGINX
+
+    Frontend -> Utilisateur: Redirige vers la connexion
+    deactivate Frontend
+
+else L'utilisateur existe déjà
+    Backend -> NGINX: 409 Conflit
+    NGINX --> Frontend: 409 Conflit
+    deactivate Backend
+    deactivate NGINX
+
+    Frontend -> Utilisateur: Affiche une erreur
+    deactivate Frontend
+end
+
+@enduml

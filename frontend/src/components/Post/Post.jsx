@@ -13,6 +13,7 @@ import CommentSection from "./CommentSection";
 import { Menu, Portal } from "@chakra-ui/react";
 import { useShallow } from "zustand/shallow";
 import { useCommentStore } from "../../store/useCommentStore";
+import ConfirmationModal from "../ConfirmationModal";
 
 const iconsClasses =
   "h-5 w-5 cursor-pointer transition duration-200 hover:scale-110";
@@ -47,7 +48,7 @@ function Post({ post }) {
                 </p>
               </span>
             </div>
-            <ActionModal postId={post.postId} creatorId={post.user._id} />
+            <ActionModal postId={post._id} creatorId={post.user._id} />
           </div>
           <p>{post.description && post.description}</p>
           <div className="">
@@ -207,24 +208,48 @@ function ActionModal({ postId = null, creatorId = null }) {
   const { authUser } = useAuthStore(
     useShallow((state) => ({ authUser: state.authUser }))
   );
+  const { deletePost } = usePostStore();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleDeleteConfirm = async () => {
+    await deletePost(postId);
+    setIsModalOpen(false);
+  };
+
   return (
-    <Menu.Root>
-      <Menu.Trigger asChild>
-        <MdOutlineMoreHoriz className="h-8 w-8 cursor-pointer" />
-      </Menu.Trigger>
-      <Portal>
-        <Menu.Positioner>
-          <Menu.Content>
-            <Menu.Item value="new-txt-a">Repost</Menu.Item>
-            <Menu.Item value="new-file-a">Report</Menu.Item>
-            {authUser._id === creatorId && (
-              <Menu.Item value="new-win-a">Delete</Menu.Item>
-            )}
-            {/* <Menu.Item value="open-file-a">Open File...</Menu.Item> */}
-          </Menu.Content>
-        </Menu.Positioner>
-      </Portal>
-    </Menu.Root>
+    <>
+      <Menu.Root>
+        <Menu.Trigger asChild>
+          <MdOutlineMoreHoriz className="h-8 w-8 cursor-pointer" />
+        </Menu.Trigger>
+        <Portal>
+          <Menu.Positioner>
+            <Menu.Content>
+              <Menu.Item value="new-txt-a">Repost</Menu.Item>
+              <Menu.Item value="new-file-a">Report</Menu.Item>
+              {authUser._id === creatorId && (
+                <Menu.Item
+                  value="new-win-a"
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  Delete
+                </Menu.Item>
+              )}
+              {/* <Menu.Item value="open-file-a">Open File...</Menu.Item> */}
+            </Menu.Content>
+          </Menu.Positioner>
+        </Portal>
+      </Menu.Root>
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleDeleteConfirm}
+        title="Confirm Post Deletion"
+      >
+        <p>Are you sure you want to delete this post?</p>
+        <p>This action cannot be undone.</p>
+      </ConfirmationModal>
+    </>
   );
 }
 

@@ -1,0 +1,67 @@
+@startuml
+left to right direction
+
+actor Utilisateur
+actor Administrateur
+
+rectangle "Système de Messagerie Sociale" {
+
+  usecase "S'authentifier" as UC_Auth
+
+  package "Accès Public" {
+    usecase "S'inscrire / Se connecter" as UC1
+  }
+
+  package "Gestion du Compte" {
+    usecase "Gérer son profil" as UC2
+    usecase "Gérer son portfolio" as UC3
+  }
+
+  package "Gestion de Contenu" {
+    usecase "Créer et gérer un post" as UC4
+    usecase "Commenter un post" as UC5
+    usecase "Tagger un post" as UC6
+    usecase "Recevoir des notifications" as UC11
+  }
+
+  package "Interactions Sociales" {
+    usecase "Envoyer un message privé" as UC7
+    usecase "Suivre un utilisateur" as UC8
+    usecase "Créer/Rejoindre un groupe" as UC9
+  }
+
+  package "Fonctionnalités Futures" {
+    usecase "Passer un appel vidéo/vocal" as UC10
+    usecase "Publier une Story éphémère" as UC12
+    usecase "Signaler un contenu" as UC14
+  }
+
+  package "Administration (Futur)" {
+    usecase "Gérer le contenu signalé" as UC15
+    usecase "Gérer les comptes utilisateurs" as UC16
+    usecase "Consulter les statistiques" as UC17
+  }
+
+  note "Tous les cas d'utilisation, à l'exception de ceux dans le paquet 'Accès Public', incluent le cas 'S\'authentifier'." as AuthNote
+  AuthNote . UC_Auth
+}
+
+Utilisateur --> UC1
+Utilisateur --> UC2
+Utilisateur --> UC3
+Utilisateur --> UC4
+Utilisateur --> UC5
+Utilisateur --> UC6
+Utilisateur --> UC7
+Utilisateur --> UC8
+Utilisateur --> UC9
+Utilisateur --> UC10
+Utilisateur --> UC11
+Utilisateur --> UC12
+Utilisateur --> UC14
+
+Administrateur --> UC15
+Administrateur --> UC16
+Administrateur --> UC17
+
+@enduml

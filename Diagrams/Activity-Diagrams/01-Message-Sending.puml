@@ -1,0 +1,36 @@
+@startuml
+title Diagramme d'activité pour l'envoi d'un message (Simplifié)
+
+skinparam titleFontSize 22
+skinparam defaultFontSize 16
+skinparam defaultFontStyle bold
+
+|Utilisateur|
+start
+:Saisit et envoie un message;
+
+|Frontend (Client)|
+:Envoie une requête API (POST /messages) au Backend;
+
+|Backend (API)|
+:Tente d'authentifier l'utilisateur;
+if (Authentification réussie ?) then (oui)
+  :Valide et sauvegarde le message;
+  fork
+    :Renvoie une réponse de succès (201) au client;
+  fork again
+    :Émet un événement interne ("MESSAGE_SENT");
+  end fork
+else (non)
+  :Renvoie une erreur (401 Unauthorized) au client;
+  stop
+endif
+
+|Serveur Temps Réel|
+:Capture l'événement et pousse une notification WebSocket;
+
+|Frontend (Destinataire)|
+:Reçoit et affiche le nouveau message;
+stop
+
+@enduml

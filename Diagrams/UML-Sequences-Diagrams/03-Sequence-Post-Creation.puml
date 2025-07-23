@@ -1,0 +1,40 @@
+@startuml
+title Création d'une Publication
+
+actor Utilisateur
+participant Frontend
+participant NGINX
+participant Backend
+database "Base de données" as Database
+
+Utilisateur -> Frontend: Soumet la publication
+activate Frontend
+
+Frontend -> NGINX: POST /api/posts/createPost (avec cookie JWT)
+activate NGINX
+
+NGINX -> Backend: transmet la requête
+activate Backend
+
+Backend -> Backend: Middleware "protectRoute"
+alt Token valide
+    Backend -> Database: Sauvegarde la publication
+    activate Database
+    Database --> Backend: Succès
+    deactivate Database
+
+    Backend --> NGINX: 201 Créé
+    NGINX --> Frontend: 201 Créé
+
+    Frontend -> Utilisateur: Met à jour l'interface
+else Token invalide
+    Backend --> NGINX: 401 Non autorisé
+    NGINX --> Frontend: 401 Non autorisé
+    Frontend -> Utilisateur: Affiche une erreur d'authentification
+end
+
+deactivate Backend
+deactivate NGINX
+deactivate Frontend
+
+@enduml

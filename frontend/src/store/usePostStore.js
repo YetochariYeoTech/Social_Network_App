@@ -72,12 +72,12 @@ export const usePostStore = create((set, get) => ({
       toast.success("Post deleted");
 
       // Update authUser's posts in authStore
-      const authStore = useAuthStore.getState();
-      const updatedUser = {
-        ...authStore.authUser,
-        posts: authStore.authUser.posts.filter((id) => id !== postId),
-      };
-      authStore.set({ authUser: updatedUser });
+      useAuthStore.setState((prev) => ({
+        authUser: {
+          ...prev.authUser,
+          posts: prev.authUser.posts.filter((id) => id !== postId),
+        },
+      }));
     } catch (error) {
       toast.error("Failed to delete post");
       console.error("deletePost error:", error);

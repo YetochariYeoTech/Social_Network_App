@@ -1,0 +1,122 @@
+@startuml
+!theme vibrant
+skinparam defaultFontSize 20
+title Class Diagram (Reseau Social HETEC)
+
+' --- Énumérations ---
+class UserRole <<enumeration>> {
+  USER
+  ADMIN
+}
+
+class NotificationType <<enumeration>> {
+  NEW_COMMENT
+  NEW_FOLLOWER
+  POST_LIKED
+}
+
+class InteractionType <<enumeration>> {
+  LIKE
+  BOOKMARK
+}
+
+' --- Domaine d'Identité et Profil ---
+class User {
+  +userId: UUID
+  +username: String
+  +email: String
+  +hashedPassword: String
+  +role: UserRole
+  +createdAt: Date
+  --
+  +updateProfile(details): void
+  +changePassword(): void
+}
+
+class Profile {
+  +profileId: UUID
+  +displayName: String
+  +bio: String
+  +avatarUrl: String
+}
+
+' --- Domaine de Contenu (avec héritage) ---
+abstract class Content {
+  +contentId: UUID
+  +body: String
+  +createdAt: Date
+}
+
+class Post extends Content {
+  +title: String
+}
+
+class Comment extends Content
+
+class Tag {
+  +tagId: UUID
+  +name: String
+}
+
+' --- Domaine de Messagerie ---
+class Conversation {
+  +conversationId: UUID
+  +createdAt: Date
+}
+
+class Message {
+  +messageId: UUID
+  +body: String
+  +sentAt: Date
+}
+
+' --- Domaine de Notifications (avec héritage) ---
+abstract class Notification {
+  +notificationId: UUID
+  +isRead: Boolean
+  +createdAt: Date
+  +type: NotificationType
+}
+
+class NewFollowerNotification extends Notification
+class NewCommentNotification extends Notification
+class PostLikedNotification extends Notification
+
+' --- Classes d'Association (pour les relations Many-to-Many) ---
+class Follow {
+  +followedAt: Date
+}
+
+class PostInteraction {
+  +type: InteractionType
+  +createdAt: Date
+}
+
+' --- Définition des Relations ---
+
+' Identité
+User "1" -- "1" Profile : has >
+
+' Suivi (Follow)
+(User, User) .. Follow : "follower" - "following"
+note on link: Un User (follower) suit un autre User (following).
+
+' Contenu
+User "1" -- "0..*" Content : creates >
+Post "1" -- "0..*" Comment : contains >
+Post "0..*" -- "0..*" Tag : is tagged with >
+
+' Interactions de contenu
+(User, Post) .. PostInteraction
+
+' Messagerie
+User "1" -- "0..*" Message : sends >
+Conversation "1" -- "1..*" Message : contains >
+User "2..*" -- "*" Conversation : participates in >
+
+' Notifications
+User "1" -- "0..*" Notification : receives <
+Notification ..> Content : concerns
+note on link: Une notification concerne souvent un contenu (un post, un commentaire).
+
+@enduml

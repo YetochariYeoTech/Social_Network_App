@@ -1,0 +1,39 @@
+@startuml
+title Diagramme d'Architecture Générale
+
+actor "Utilisateur" as user
+
+node "Client (Navigateur)" {
+  component "Frontend (React)" as frontend
+}
+
+node "Serveur" {
+  component "NGINX" as nginx
+
+  node "Services Applicatifs" {
+    component "Backend API (Node.js)" as backend
+    component "Serveur Temps Réel (Socket.IO)" as realtime
+  }
+
+  database "Base de Données" {
+    component "MongoDB" as db
+  }
+}
+
+' --- Flux de communication ---
+user --> frontend : "1. Interagit avec l'UI"
+
+frontend --> nginx : "2. Requêtes API (HTTPS)\n3. Connexion (WebSocket)"
+
+nginx --> backend : "2a. Proxy des requêtes API"
+nginx --> realtime : "3a. Proxy de la connexion WebSocket"
+
+backend --> db : "4. Lecture/Écriture des données"
+
+' Le backend notifie le serveur temps réel lorsqu'un événement se produit
+backend ..> realtime : "5. Émet un événement (ex: 'nouveau_message')"
+
+' Le serveur temps réel pousse les mises à jour aux clients connectés
+realtime --> frontend : "6. Pousse les mises à jour"
+
+@enduml

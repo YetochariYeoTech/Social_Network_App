@@ -4,7 +4,9 @@ import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 
 const showError = (error) => {
-  toast.error(error?.response?.data?.message || "Something went wrong with events");
+  toast.error(
+    error?.response?.data?.message || "Something went wrong with events"
+  );
 };
 
 export const useEventStore = create((set, get) => ({
@@ -32,7 +34,7 @@ export const useEventStore = create((set, get) => ({
     try {
       await axiosInstance.post("/events", eventData);
       // No need to manually add the event here, the socket listener will do it
-      toast.success("Event created successfully!");
+      // toast.success("Event created successfully!");
       return true; // Indicate success
     } catch (error) {
       showError(error);
@@ -62,16 +64,16 @@ export const useEventStore = create((set, get) => ({
       });
       set({ hasListener: true });
     } else {
-        console.warn("Socket not available when trying to listen for events.")
+      console.warn("Socket not available when trying to listen for events.");
     }
   },
-  
+
   // Action to clean up the listener
   cleanupListener: () => {
-      const { socket } = useAuthStore.getState();
-      if (socket && get().hasListener) {
-          socket.off("newEvent");
-          set({ hasListener: false });
-      }
-  }
+    const { socket } = useAuthStore.getState();
+    if (socket && get().hasListener) {
+      socket.off("newEvent");
+      set({ hasListener: false });
+    }
+  },
 }));

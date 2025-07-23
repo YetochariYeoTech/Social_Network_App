@@ -1,0 +1,57 @@
+@startuml
+title Diagramme d'activité pour l'inscription d'un utilisateur
+
+skinparam titleFontSize 22
+
+skinparam defaultFontSize 16
+skinparam defaultFontStyle bold
+
+|Utilisateur|
+start
+:Accède à la page d'inscription;
+:Remplit le formulaire (email, mot de passe, etc.);
+:Clique sur "S'inscrire";
+
+|Frontend (Client)|
+:Valide les données du formulaire;
+:Envoie une requête API (POST /auth/register) au Backend;
+
+|Backend (API)|
+:Reçoit la requête;
+:Valide les données côté serveur;
+:Vérifie si l'utilisateur existe déjà en base de données;
+if (L'utilisateur existe déjà ?) then (oui)
+  :Renvoie une erreur (409 Conflict) au client;
+  stop
+else (non)
+  :Hache le mot de passe;
+  :Crée un nouvel utilisateur en base de données;
+  :Renvoie une réponse de succès (201 Created) au client;
+endif
+
+|Frontend (Client)|
+:Reçoit la réponse de succès;
+:Redirige l'utilisateur vers la page de connexion;
+
+stop
+
+'-------------------------------------------------------------------------------
+' LOGIQUE DU DIAGRAMME
+'-------------------------------------------------------------------------------
+' Ce diagramme montre le processus standard d'inscription.
+'
+' 1. Validation Double:
+'    - Une validation est faite côté client (Frontend) pour une réactivité
+'      immédiate, et une autre côté serveur (Backend) pour la sécurité et
+'      l'intégrité des données.
+'
+' 2. Flux d'Erreur Principal:
+'    - Le cas d'erreur le plus courant est la tentative de s'inscrire avec
+'      un email ou un nom d'utilisateur déjà pris. Le diagramme montre que
+'      le processus s'arrête si c'est le cas.
+'
+' 3. Sécurité:
+'    - L'étape de hachage du mot de passe est cruciale pour la sécurité et
+'      est explicitement mentionnée.
+'-------------------------------------------------------------------------------
+@enduml

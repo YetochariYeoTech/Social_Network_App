@@ -1,0 +1,51 @@
+@startuml
+title Diagramme d'activité pour suivre un utilisateur (Simplifié)
+
+skinparam titleFontSize 22
+skinparam defaultFontSize 16
+skinparam defaultFontStyle bold
+
+|Utilisateur|
+start
+:Clique sur le bouton "Suivre" sur un profil;
+
+|Frontend (Client)|
+:Envoie une requête API (POST /follow/{userId});
+
+|Backend (API)|
+:Authentifie et crée la relation de suivi;
+if (Opération valide ?) then (oui)
+  fork
+    :Renvoie une réponse de succès au client;
+  fork again
+    :Émet un événement ("USER_FOLLOWED");
+  end fork
+else (non)
+  :Renvoie une erreur (ex: 401, 409);
+  stop
+endif
+
+|Frontend (Client)|
+:Met à jour l'interface (bouton "Suivi");
+
+|Serveur Temps Réel|
+:Notifie l'utilisateur suivi via WebSocket;
+stop
+
+'-------------------------------------------------------------------------------
+' LOGIQUE DU DIAGRAMME (Simplifié)
+'-------------------------------------------------------------------------------
+' Ce diagramme illustre le processus de suivi d'un utilisateur de manière concise.
+'
+' 1. Abstraction:
+'    - Les étapes de validation multiples (authentification, existence du suivi)
+'      sont regroupées en une seule action "Authentifie et crée la relation".
+'    - La condition "Opération valide ?" couvre tous les cas d'erreur possibles
+'      (non authentifié, suivi déjà existant, etc.).
+'
+' 2. Flux Essentiel:
+'    - Le focus est mis sur l'interaction principale : un clic déclenche une
+'      requête, le backend la traite, et le frontend et le serveur temps réel
+'      réagissent en conséquence.
+'-------------------------------------------------------------------------------
+@enduml
