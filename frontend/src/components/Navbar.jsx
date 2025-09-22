@@ -49,6 +49,19 @@ const Navbar = () => {
 
           {authUser && (
             <>
+              {authUser.role === "ADMIN" && (
+                <Link
+                  to="/admin"
+                  className={`btn btn-sm gap-2 ${
+                    isActive("/admin")
+                      ? "bg-primary text-primary-content hover:text-base-content"
+                      : ""
+                  }`}
+                >
+                  <User className="w-5 h-5" />
+                  <span>Admin</span>
+                </Link>
+              )}
               <Link
                 to="/"
                 className={`btn btn-sm gap-2 ${
@@ -189,6 +202,21 @@ const Navbar = () => {
                   <User className="w-4 h-4 mr-2" />
                   Profile
                 </Link>
+
+                {authUser.role === "ADMIN" && (
+                  <Link
+                    to="/admin"
+                    className={`btn btn-sm w-full ${
+                      isActive("/admin")
+                        ? "bg-primary text-primary-content hover:text-base-content"
+                        : ""
+                    }`}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <User className="w-4 h-4 mr-2" />
+                    Admin
+                  </Link>
+                )}
 
                 <button
                   onClick={async () => {

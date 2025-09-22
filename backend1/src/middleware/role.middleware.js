@@ -16,4 +16,6 @@ const checkRole = (requiredRoles) => (req, res, next) => {
   next();
 };
 
+export const isAdmin = checkRole(["ADMIN"]);
+
 export default checkRole;

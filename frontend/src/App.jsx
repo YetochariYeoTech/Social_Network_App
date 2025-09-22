@@ -8,7 +8,7 @@ import ProfilePage from "./pages/ProfilePage";
 import CollectionPage from "./pages/CollectionPage";
 import PostPage from "./pages/PostPage";
 import NotFoundPage from "./pages/NotFoundPage";
-
+import AdminPage from "./pages/AdminPage";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuthStore } from "./store/useAuthStore";
 import { useThemeStore } from "./store/useThemeStore";
@@ -58,6 +58,17 @@ const App = () => {
           <Route
             path="/"
             element={authUser ? <PostPage /> : <Navigate to="/login" />}
+          />
+          {/* Route for admin dashboard */}
+          <Route
+            path="/admin"
+            element={
+              authUser && authUser.role === "ADMIN" ? (
+                <AdminPage />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
           />
           <Route path="/settings" element={<SettingsPage />} />
           <Route

@@ -109,6 +109,10 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: null,
     },
+    isLocked: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
