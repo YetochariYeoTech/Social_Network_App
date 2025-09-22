@@ -78,6 +78,10 @@ export const login = async (req, res) => {
       return sendErrorResponse(res, 423, `Account locked. Try again in ${timeLeft} minutes.`);
     }
 
+    if (user.isLocked) {
+      return sendErrorResponse(res, 423, "You are locked");
+    }
+
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
       // Increment failed login attempts

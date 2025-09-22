@@ -9,6 +9,7 @@ import {
   Menu,
   MessageCircle,
   Star,
+  Shield,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -58,7 +59,7 @@ const Navbar = () => {
                       : ""
                   }`}
                 >
-                  <User className="w-5 h-5" />
+                  <Shield className="w-5 h-5" />
                   <span>Admin</span>
                 </Link>
               )}
@@ -213,7 +214,7 @@ const Navbar = () => {
                     }`}
                     onClick={() => setIsOpen(false)}
                   >
-                    <User className="w-4 h-4 mr-2" />
+                    <Shield className="w-4 h-4 mr-2" />
                     Admin
                   </Link>
                 )}
