@@ -5,6 +5,7 @@ import { IoMdAddCircle as AddButton } from "react-icons/io";
 import { Loader } from "lucide-react";
 import AddEventModal from "./AddEventModal";
 import { useEventStore } from "../../store/useEventStore";
+import { useAuthStore } from "../../store/useAuthStore";
 
 function EventsDisplay() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,6 +16,7 @@ function EventsDisplay() {
     listenForEvents,
     cleanupListener,
   } = useEventStore();
+  const { authUser } = useAuthStore();
 
   useEffect(() => {
     fetchEvents();
@@ -32,11 +34,13 @@ function EventsDisplay() {
     <div className="flex flex-col bg-base-200 pl-1 pt-1 pb-1 shadow-md rounded-lg">
       <div className="flex justify-between items-center ">
         <span className="font-bold mb-2">Upcoming Events</span>
-        <AddButton
-          size={25}
-          className="text-primary hover:cursor-pointer hover:scale-95 hover:text-base-content transition-all duration-200"
-          onClick={handleOpenModal}
-        />
+        {authUser.role === "STAFF" && (
+          <AddButton
+            size={25}
+            className="text-primary hover:cursor-pointer hover:scale-95 hover:text-base-content transition-all duration-200"
+            onClick={handleOpenModal}
+          />
+        )}
       </div>
 
       {isFetchingEvents ? (

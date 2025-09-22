@@ -107,7 +107,10 @@ export const likePost = async (req, res) => {
       { new: true, session }
     );
 
-    const [updatedUser, updatedPost] = await Promise.all([userUpdate, postUpdate]);
+    const [updatedUser, updatedPost] = await Promise.all([
+      userUpdate,
+      postUpdate,
+    ]);
 
     if (!updatedUser || !updatedPost) {
       throw new Error("Failed to update user or post");
@@ -127,11 +130,19 @@ export const likePost = async (req, res) => {
 
       await User.findByIdAndUpdate(
         post.user,
-        { $push: { notifications: notification._id, unreadNotifications: notification._id } },
+        {
+          $push: {
+            notifications: notification._id,
+            unreadNotifications: notification._id,
+          },
+        },
         { session }
       );
 
-      eventEmitter.emit("newPostLike", { notification, postAuthor: post.user._id });
+      eventEmitter.emit("newPostLike", {
+        notification,
+        postAuthor: post.user._id,
+      });
     }
 
     await session.commitTransaction();
@@ -181,7 +192,10 @@ export const unlikePost = async (req, res) => {
       { new: true, session }
     );
 
-    const [updatedUser, updatedPost] = await Promise.all([userUpdate, postUpdate]);
+    const [updatedUser, updatedPost] = await Promise.all([
+      userUpdate,
+      postUpdate,
+    ]);
 
     if (!updatedUser || !updatedPost) {
       throw new Error("Failed to update user or post");
@@ -201,7 +215,12 @@ export const unlikePost = async (req, res) => {
     if (deletedNotification) {
       await User.findByIdAndUpdate(
         post.user,
-        { $pull: { notifications: deletedNotification._id, unreadNotifications: deletedNotification._id } },
+        {
+          $pull: {
+            notifications: deletedNotification._id,
+            unreadNotifications: deletedNotification._id,
+          },
+        },
         { session }
       );
     }

@@ -1,81 +1,62 @@
 @startuml
-left to right direction
-
-actor Utilisateur
+' Définition des acteurs avec héritage pour clarifier les rôles
+actor Visiteur
+actor Utilisateur as "Utilisateur Enregistré"
 actor Administrateur
 
+' L'Utilisateur est un type de Visiteur avec plus de droits
+' L'Administrateur est un type d'Utilisateur avec des droits étendus
+Utilisateur -up-|> Visiteur
+Administrateur -up-|> Utilisateur
+
 rectangle "Système de Messagerie Sociale" {
+  ' Cas d'utilisation pour le Visiteur (non authentifié)
+  usecase "S'inscrire" as UC_Register
+  usecase "Se connecter" as UC_Login
+  usecase "Consulter les posts publics" as UC_ViewPublicPosts
 
-  usecase "S'authentifier" as UC_Auth
+  ' Cas d'utilisation pour l'Utilisateur Enregistré
+  usecase "Gérer son profil" as UC_ManageProfile
+  usecase "Créer un post" as UC_CreatePost
+  usecase "Commenter un post" as UC_Comment
+  usecase "Envoyer un message privé" as UC_SendMessage
+  usecase "Suivre un autre utilisateur" as UC_Follow
+  usecase "Recevoir des notifications" as UC_GetNotifications
+  usecase "Signaler un contenu" as UC_ReportContent
 
-  package "Accès Public" {
-    usecase "S'inscrire / Se connecter" as UC1
-  }
+  ' Cas d'utilisation pour l'Administrateur
+  usecase "Gérer les comptes utilisateurs" as UC_ManageUsers
+  usecase "Gérer le contenu signalé" as UC_ManageReports
+  usecase "Consulter les statistiques" as UC_ViewStats
 
-  package "Gestion du Compte" {
-    usecase "Gérer son profil" as UC2
-    usecase "Gérer son portfolio" as UC3
-  }
-
-  package "Gestion de Contenu" {
-    usecase "Créer et gérer un post" as UC4
-    usecase "Commenter un post" as UC5
-    usecase "Tagger un post" as UC6
-    usecase "Recevoir des notifications" as UC11
-  }
-
-  package "Signalement et Modération" {
-    usecase "Signaler un contenu" as UC14
-    usecase "Gérer le contenu signalé" as UC15
-    usecase "Supprimer un contenu" as UC18
-    usecase "Ignorer le signalement" as UC20
-  }
-
-  package "Interactions Sociales" {
-    usecase "Envoyer un message privé" as UC7
-    usecase "Suivre un utilisateur" as UC8
-    usecase "Créer/Rejoindre un groupe" as UC9
-  }
-
-  package "Administration" {
-    usecase "Gérer les comptes utilisateurs" as UC16
-    usecase "Bloquer un utilisateur" as UC19
-    usecase "Suspendre un utilisateur" as UC21
-    usecase "Consulter les statistiques" as UC17
-  }
-
-  note "Tous les cas d'utilisation, à l'exception de ceux dans le paquet 'Accès Public', incluent le cas 'S'authentifier'." as AuthNote
-  AuthNote . UC_Auth
+  ' Cas d'utilisation étendus ou inclus
+  usecase "Modifier le mot de passe" as UC_ChangePassword
+  usecase "Ajouter un média" as UC_AddMedia
+  usecase "Bloquer un utilisateur" as UC_BlockUser
+  usecase "Supprimer un contenu" as UC_DeleteContent
 }
 
-' Lien invisible pour forcer la disposition
-UC11 -[hidden]d-> UC14
+' Relations Acteur -> Cas d'utilisation
+Visiteur --> UC_Register
+Visiteur --> UC_Login
+Visiteur --> UC_ViewPublicPosts
 
-' Cas d'utilisation pour l'Utilisateur
-Utilisateur --> UC1
-Utilisateur --> UC2
-Utilisateur --> UC3
-Utilisateur --> UC4
-Utilisateur --> UC5
-Utilisateur --> UC6
-Utilisateur --> UC7
-Utilisateur --> UC8
-Utilisateur --> UC9
-Utilisateur --> UC11
-Utilisateur --> UC14
+"Utilisateur Enregistré" --> UC_ManageProfile
+"Utilisateur Enregistré" --> UC_CreatePost
+"Utilisateur Enregistré" --> UC_Comment
+"Utilisateur Enregistré" --> UC_SendMessage
+"Utilisateur Enregistré" --> UC_Follow
+"Utilisateur Enregistré" --> UC_GetNotifications
+"Utilisateur Enregistré" --> UC_ReportContent
 
-' Cas d'utilisation pour l'Administrateur
-Administrateur --> UC15
-Administrateur --> UC16
-Administrateur --> UC17
+Administrateur --> UC_ManageUsers
+Administrateur --> UC_ManageReports
+Administrateur --> UC_ViewStats
 
-' Extensions pour la gestion de contenu signalé
-UC18 <.. UC15 : <<extend>>
-UC20 <.. UC15 : <<extend>>
-
-' Extensions pour la gestion des comptes utilisateurs
-UC19 <.. UC16 : <<extend>>
-UC21 <.. UC16 : <<extend>>
+' Relations entre cas d'utilisation (Extend / Include)
+UC_ManageProfile <. UC_ChangePassword : <<extend>>
+UC_CreatePost ..> UC_AddMedia : <<include>>
+UC_ManageUsers <. UC_BlockUser : <<extend>>
+UC_ManageReports <. UC_DeleteContent : <<extend>>
 
 @enduml
-
