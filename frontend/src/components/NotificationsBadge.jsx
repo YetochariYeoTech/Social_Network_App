@@ -12,7 +12,7 @@ function NotificationsBadge() {
     iconsStyles: "w-6 h-6 transition-all duration-300",
   };
   const { authUser } = useAuthStore();
-  const { unreadCounts, fetchUnreadNotifications } = useNotificationStore();
+  const { unreadCounts, fetchUnreadNotifications, notifications, fetchNotifications, markAsRead } = useNotificationStore();
   const [likesModalOpen, setLikesModalOpen] = useState(false);
   const [commentsModalOpen, setCommentsModalOpen] = useState(false);
   const [followersModalOpen, setFollowersModalOpen] = useState(false);
@@ -43,7 +43,10 @@ function NotificationsBadge() {
         <button
           className="flex items-center tooltip tooltip-bottom hover:scale-105 transition-transform duration-100"
           data-tip="Likes"
-          onClick={() => setLikesModalOpen(true)}
+          onClick={() => {
+            fetchNotifications();
+            setLikesModalOpen(true);
+          }}
         >
           <Bell className={styles.iconsStyles} />
           <span className={styles.countersStyles}>{likeNotifications}</span>
@@ -51,7 +54,10 @@ function NotificationsBadge() {
         <button
           className="flex items-center tooltip tooltip-bottom hover:scale-105 transition-transform duration-100"
           data-tip="Followers"
-          onClick={() => setFollowersModalOpen(true)}
+          onClick={() => {
+            fetchNotifications();
+            setFollowersModalOpen(true);
+          }}
         >
           <Follower className={styles.iconsStyles} />
           <span className={styles.countersStyles}>140</span>
@@ -59,7 +65,10 @@ function NotificationsBadge() {
         <button
           className="flex items-center tooltip tooltip-bottom hover:scale-105 transition-transform duration-100"
           data-tip="Comments"
-          onClick={() => setCommentsModalOpen(true)}
+          onClick={() => {
+            fetchNotifications();
+            setCommentsModalOpen(true);
+          }}
         >
           <Comment className={styles.iconsStyles} />
           <span className={styles.countersStyles}>{commentNotifications}</span>
@@ -68,33 +77,42 @@ function NotificationsBadge() {
       <NotificationModal
         title="Likes"
         isOpen={likesModalOpen}
-        onClose={() => setLikesModalOpen(false)}
+        onClose={() => {
+          setLikesModalOpen(false);
+          markAsRead("LIKE");
+        }}
       >
         <ul>
-          {likes.map((like, index) => (
-            <li key={index}>{like}</li>
+          {notifications.LIKE?.map((notification) => (
+            <li key={notification._id}>{`${notification.sender.fullName} liked your post`}</li>
           ))}
         </ul>
       </NotificationModal>
       <NotificationModal
         title="Comments"
         isOpen={commentsModalOpen}
-        onClose={() => setCommentsModalOpen(false)}
+        onClose={() => {
+          setCommentsModalOpen(false);
+          markAsRead("COMMENT");
+        }}
       >
         <ul>
-          {comments.map((comment, index) => (
-            <li key={index}>{comment}</li>
+          {notifications.COMMENT?.map((notification) => (
+            <li key={notification._id}>{`${notification.sender.fullName} commented on your post`}</li>
           ))}
         </ul>
       </NotificationModal>
       <NotificationModal
         title="Followers"
         isOpen={followersModalOpen}
-        onClose={() => setFollowersModalOpen(false)}
+        onClose={() => {
+          setFollowersModalOpen(false);
+          markAsRead("FOLLOW");
+        }}
       >
         <ul>
-          {followers.map((follower, index) => (
-            <li key={index}>{follower}</li>
+          {notifications.FOLLOW?.map((notification) => (
+            <li key={notification._id}>{`${notification.sender.fullName} started following you`}</li>
           ))}
         </ul>
       </NotificationModal>

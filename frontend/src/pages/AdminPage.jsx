@@ -12,16 +12,20 @@ function AdminPage() {
   const [userToDelete, setUserToDelete] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true); // Add loading state
   const { authUser } = useAuthStore();
 
   useEffect(() => {
     const fetchUsers = async () => {
+      setLoading(true); // Set loading to true before fetching
       try {
         const res = await axiosInstance.get(`/admin/users?page=${currentPage}`);
         setUsers(res.data.users);
         setTotalPages(res.data.totalPages);
       } catch (error) {
         toast.error(error.response.data.message || "An error occurred");
+      } finally {
+        setLoading(false); // Set loading to false after fetching (success or error)
       }
     };
 
@@ -97,106 +101,112 @@ function AdminPage() {
         </p>
       </div>
       <div className="overflow-x-auto bg-base-100 shadow-lg rounded-lg">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-base-200">
-            <tr>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-base-content uppercase tracking-wider"
-              >
-                Full Name
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-base-content uppercase tracking-wider"
-              >
-                Email
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-base-content uppercase tracking-wider"
-              >
-                Role
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-base-content uppercase tracking-wider"
-              >
-                Created At
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-base-content uppercase tracking-wider"
-              >
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-base-100 divide-y divide-gray-200">
-            {users.map((user) => (
-              <tr key={user._id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 h-10 w-10">
-                      <img
-                        className="h-10 w-10 rounded-full"
-                        src={user.profilePic || "/avatar.png"}
-                        alt=""
-                      />
-                    </div>
-                    <div className="ml-4">
-                      <div className="text-sm font-medium text-base-content">
-                        {user.fullName}
+        {loading ? (
+          <div className="flex justify-center items-center h-48">
+            <span className="loading loading-spinner loading-lg"></span>
+          </div>
+        ) : (
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-base-200">
+              <tr>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-base-content uppercase tracking-wider"
+                >
+                  Full Name
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-base-content uppercase tracking-wider"
+                >
+                  Email
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-base-content uppercase tracking-wider"
+                >
+                  Role
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-base-content uppercase tracking-wider"
+                >
+                  Created At
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-base-content uppercase tracking-wider"
+                >
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-base-100 divide-y divide-gray-200">
+              {users.map((user) => (
+                <tr key={user._id}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0 h-10 w-10">
+                        <img
+                          className="h-10 w-10 rounded-full"
+                          src={user.profilePic || "/avatar.png"}
+                          alt=""
+                        />
+                      </div>
+                      <div className="ml-4">
+                        <div className="text-sm font-medium text-base-content">
+                          {user.fullName}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-base-content">{user.email}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-base-content">{user.role}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-base-content">
-                    {new Date(user.createdAt).toLocaleDateString()}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div className="flex items-center space-x-4">
-                    {user.isLocked ? (
-                      <Tooltip text="Unlock User">
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-base-content">{user.email}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-base-content">{user.role}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-base-content">
+                      {new Date(user.createdAt).toLocaleDateString()}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div className="flex items-center space-x-4">
+                      {user.isLocked ? (
+                        <Tooltip text="Unlock User">
+                          <button
+                            className="text-green-600 hover:text-green-900"
+                            onClick={() => handleUnlockUser(user._id)}
+                          >
+                            <FaUnlock className="inline-block h-5 w-5" />
+                          </button>
+                        </Tooltip>
+                      ) : (
+                        <Tooltip text="Lock User">
+                          <button
+                            className="text-blue-600 hover:text-blue-900"
+                            onClick={() => handleLockUser(user._id)}
+                          >
+                            <FaUserLock className="inline-block h-5 w-5" />
+                          </button>
+                        </Tooltip>
+                      )}
+                      <Tooltip text="Delete User">
                         <button
-                          className="text-green-600 hover:text-green-900"
-                          onClick={() => handleUnlockUser(user._id)}
+                          className="text-red-600 hover:text-red-900"
+                          onClick={() => openModal(user._id)}
                         >
-                          <FaUnlock className="inline-block h-5 w-5" />
+                          <FaTrash className="inline-block h-5 w-5" />
                         </button>
                       </Tooltip>
-                    ) : (
-                      <Tooltip text="Lock User">
-                        <button
-                          className="text-blue-600 hover:text-blue-900"
-                          onClick={() => handleLockUser(user._id)}
-                        >
-                          <FaUserLock className="inline-block h-5 w-5" />
-                        </button>
-                      </Tooltip>
-                    )}
-                    <Tooltip text="Delete User">
-                      <button
-                        className="text-red-600 hover:text-red-900"
-                        onClick={() => openModal(user._id)}
-                      >
-                        <FaTrash className="inline-block h-5 w-5" />
-                      </button>
-                    </Tooltip>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
       <div className="flex justify-between items-center p-4">
         <div>

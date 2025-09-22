@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import {
   LogOut,
@@ -16,6 +16,8 @@ import { motion, AnimatePresence } from "framer-motion";
 const Navbar = () => {
   const { logout, authUser } = useAuthStore();
   const [isOpen, setIsOpen] = useState(false);
+  const adminDropdownRef = useRef(null);
+  const mobileAdminDropdownRef = useRef(null);
   const location = useLocation();
 
   const isActive = (path) => location.pathname === path;
@@ -51,17 +53,16 @@ const Navbar = () => {
           {authUser && (
             <>
               {authUser.role === "ADMIN" && (
-                <Link
-                  to="/admin"
-                  className={`btn btn-sm gap-2 ${
-                    isActive("/admin")
-                      ? "bg-primary text-primary-content hover:text-base-content"
-                      : ""
-                  }`}
-                >
-                  <Shield className="w-5 h-5" />
-                  <span>Admin</span>
-                </Link>
+                <div className="dropdown dropdown-end">
+                  <div tabIndex={0} role="button" className="btn btn-sm gap-2" ref={adminDropdownRef}>
+                    <Shield className="w-5 h-5" />
+                    <span>Admin</span>
+                  </div>
+                  <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                    <li><Link to="/admin/users" onClick={() => adminDropdownRef.current.blur()}>Manage Users</Link></li>
+                    <li><Link to="/admin/posts" onClick={() => adminDropdownRef.current.blur()}>Manage Posts</Link></li>
+                  </ul>
+                </div>
               )}
               <Link
                 to="/"
@@ -205,18 +206,16 @@ const Navbar = () => {
                 </Link>
 
                 {authUser.role === "ADMIN" && (
-                  <Link
-                    to="/admin"
-                    className={`btn btn-sm w-full ${
-                      isActive("/admin")
-                        ? "bg-primary text-primary-content hover:text-base-content"
-                        : ""
-                    }`}
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <Shield className="w-4 h-4 mr-2" />
-                    Admin
-                  </Link>
+                  <div className="dropdown dropdown-top w-full">
+                    <div tabIndex={0} role="button" className="btn btn-sm w-full" ref={mobileAdminDropdownRef}>
+                      <Shield className="w-4 h-4 mr-2" />
+                      Admin
+                    </div>
+                    <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-full">
+                      <li><Link to="/admin/users" onClick={() => { setIsOpen(false); mobileAdminDropdownRef.current.blur(); }}>Manage Users</Link></li>
+                      <li><Link to="/admin/posts" onClick={() => { setIsOpen(false); mobileAdminDropdownRef.current.blur(); }}>Manage Posts</Link></li>
+                    </ul>
+                  </div>
                 )}
 
                 <button

@@ -9,6 +9,7 @@ import CollectionPage from "./pages/CollectionPage";
 import PostPage from "./pages/PostPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import AdminPage from "./pages/AdminPage";
+import ManagePostsPage from "./pages/ManagePostsPage";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuthStore } from "./store/useAuthStore";
 import { useThemeStore } from "./store/useThemeStore";
@@ -61,10 +62,20 @@ const App = () => {
           />
           {/* Route for admin dashboard */}
           <Route
-            path="/admin"
+            path="/admin/users"
             element={
               authUser && authUser.role === "ADMIN" ? (
                 <AdminPage />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/admin/posts"
+            element={
+              authUser && authUser.role === "ADMIN" ? (
+                <ManagePostsPage />
               ) : (
                 <Navigate to="/login" />
               )

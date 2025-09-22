@@ -263,3 +263,20 @@ export const getUnreadNotifications = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+export const markTypeAsRead = async (req, res) => {
+  try {
+    const { notificationType } = req.body;
+    const userId = req.user._id;
+
+    await Notification.updateMany(
+      { recipient: userId, type: notificationType, isRead: false },
+      { $set: { isRead: true } }
+    );
+
+    res.status(200).json({ message: "Notifications marked as read" });
+  } catch (error) {
+    console.error("Error in markTypeAsRead:", error.message);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};

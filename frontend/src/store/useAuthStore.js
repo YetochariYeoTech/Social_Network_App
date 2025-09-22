@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
+import { useNotificationStore } from "./useNotificationStore.js";
 
 const BASE_URL =
   import.meta.env.MODE === "development" ? "http://localhost:8080" : "/";
@@ -106,6 +107,14 @@ export const useAuthStore = create((set, get) => ({
 
     socket.on("getOnlineUsers", (userIds) => {
       set({ onlineUsers: userIds });
+    });
+
+    socket.on("newNotification", (notification) => {
+      useNotificationStore.getState().incrementUnreadCount(notification.type);
+    });
+
+    socket.on("notificationDecremented", (notification) => {
+      useNotificationStore.getState().decrementUnreadCount(notification.type);
     });
   },
 

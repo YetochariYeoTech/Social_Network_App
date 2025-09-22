@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { Avatar } from "@chakra-ui/react";
 import { IoMdAddCircle as AddButton } from "react-icons/io";
 import { Loader } from "lucide-react";
 import AddEventModal from "./AddEventModal";
+import EventDetailsModal from "./EventDetailsModal";
 import { useEventStore } from "../../store/useEventStore";
 import { useAuthStore } from "../../store/useAuthStore";
 
 function EventsDisplay() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const {
     events,
     isFetchingEvents,
@@ -29,6 +31,16 @@ function EventsDisplay() {
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
+
+  const handleOpenDetailsModal = (event) => {
+    setSelectedEvent(event);
+    setIsDetailsModalOpen(true);
+  };
+
+  const handleCloseDetailsModal = () => {
+    setSelectedEvent(null);
+    setIsDetailsModalOpen(false);
+  };
 
   return (
     <div className="flex flex-col bg-base-200 pl-1 pt-1 pb-1 shadow-md rounded-lg">
@@ -51,10 +63,10 @@ function EventsDisplay() {
         <div className="flex flex-col space-y-2 divide-y divide-base-100 max-h-72 overflow-auto">
           {events.length > 0 ? (
             events.map((event) => (
-              <Link
-                to={`/events/${event._id}`}
-                className=" p-2 flex gap-2 items-center hover:shadow-md hover:ml-2 hover:bg-base-100 transition-all duration-200"
+              <div
+                className=" p-2 flex gap-2 items-center hover:shadow-md hover:ml-2 hover:bg-base-100 transition-all duration-200 cursor-pointer"
                 key={event._id}
+                onClick={() => handleOpenDetailsModal(event)}
               >
                 <Avatar.Root shape="full" size="sm">
                   <Avatar.Fallback name={event.creator.fullName} />
@@ -74,7 +86,7 @@ function EventsDisplay() {
                       : event.title}
                   </span>
                 </div>
-              </Link>
+              </div>
             ))
           ) : (
             <p className="text-center text-gray-500">No upcoming events.</p>
@@ -82,6 +94,7 @@ function EventsDisplay() {
         </div>
       )}
       <AddEventModal isOpen={isModalOpen} onClose={handleCloseModal} />
+      <EventDetailsModal isOpen={isDetailsModalOpen} onClose={handleCloseDetailsModal} event={selectedEvent} refetch={fetchEvents} />
     </div>
   );
 }

@@ -36,4 +36,36 @@ export const useNotificationStore = create((set) => ({
       set({ isFetching: false });
     }
   },
+
+  incrementUnreadCount: (notificationType) => {
+    set((state) => ({
+      unreadCounts: {
+        ...state.unreadCounts,
+        [notificationType]: (state.unreadCounts[notificationType] || 0) + 1,
+      },
+    }));
+  },
+
+  decrementUnreadCount: (notificationType) => {
+    set((state) => ({
+      unreadCounts: {
+        ...state.unreadCounts,
+        [notificationType]: Math.max(0, (state.unreadCounts[notificationType] || 0) - 1),
+      },
+    }));
+  },
+
+  markAsRead: async (notificationType) => {
+    set((state) => ({
+      unreadCounts: {
+        ...state.unreadCounts,
+        [notificationType]: 0,
+      },
+    }));
+    try {
+      await axiosInstance.post("/notifications/read", { notificationType });
+    } catch (error) {
+      showError(error);
+    }
+  },
 }));

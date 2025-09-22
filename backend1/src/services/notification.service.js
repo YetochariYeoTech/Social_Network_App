@@ -131,3 +131,15 @@ eventEmitter.on("newEvent", async ({ event, creatorId }) => {
     console.error("Error in newEvent event listener:", error.message);
   }
 });
+
+eventEmitter.on("postDisliked", async ({ postAuthor, notificationType }) => {
+  try {
+    const receiverSocketId = getReceiverSocketId(postAuthor);
+
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("notificationDecremented", { type: notificationType });
+    }
+  } catch (error) {
+    console.error("Error in postDisliked event listener:", error.message);
+  }
+});

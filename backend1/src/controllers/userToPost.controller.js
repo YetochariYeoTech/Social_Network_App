@@ -225,6 +225,11 @@ export const unlikePost = async (req, res) => {
       );
     }
 
+    eventEmitter.emit("postDisliked", { 
+      postAuthor: post.user,
+      notificationType: "LIKE",
+     });
+
     await session.commitTransaction();
     session.endSession();
 
